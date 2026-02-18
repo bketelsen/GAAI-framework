@@ -10,7 +10,7 @@ Works with Claude Code, OpenCode, Codex CLI, Gemini CLI, Antigravity, Cursor, Wi
 
 ## The Problem
 
-You're using Claude Code, OpenCode, Codex CLI, Cursor, or another agentic coding tool. It writes code fast. The quality keeps improving. We're all shipping more than ever before.
+Your agentic coding tool writes code fast. The quality keeps improving. We're all shipping more than ever before.
 
 But without the right steering system, speed and drift become the problem.
 
