@@ -146,6 +146,7 @@ Fork or clone. Run `install.sh`. Adapt the rules, memory, and skills to your pro
 - [Senior Engineer Guide](docs/guides/senior-engineer-guide.md) — governance, rules, CI
 - [Skills Index](.gaai/skills/README.skills.md) — all 31 skills
 - [Tool Compatibility](docs/reference/tool-compatibility.md) — Claude Code, OpenCode, Codex CLI, Gemini CLI, Antigravity, Cursor, Windsurf
+- [Design Decisions](docs/architecture/design-decisions.md) — why GAAI is structured the way it is (ADRs + research basis)
 
 ---
 
