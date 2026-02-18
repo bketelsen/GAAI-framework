@@ -44,7 +44,7 @@ This repo contains:
 │   └── cross/{skill-name}/SKILL.md      (16 skills)
 ├── contexts/
 │   ├── README.contexts.md
-│   ├── rules/         ← 7 rule files
+│   ├── rules/         ← 6 rule files
 │   ├── memory/        ← README + memory file templates
 │   ├── backlog/       ← README + YAML templates
 │   └── artefacts/     ← README + artefact templates

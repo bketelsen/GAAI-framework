@@ -16,12 +16,12 @@ But without the right steering system, speed and drift become the problem.
 
 Then something starts breaking down — not the code. The process.
 
-- You ask the agent to implement something. It does. But it also changes three things you didn't ask for.
-- You start a new session. The agent has no idea what was decided last week. You re-explain. Again.
-- The agent asks a clarifying question mid-implementation. You answer. It goes in a different direction than you meant.
-- You have a rule: "always use the repository pattern for database access." The agent follows it sometimes.
-- Three sessions in, you realize the feature that just shipped contradicts a decision you made two weeks ago.
-- You're not sure what the agent is allowed to do on its own versus what it should ask you first.
+- The agent ships the feature. It also quietly refactors two unrelated modules, renames a function, and updates a config you didn't mention.
+- You agreed three sessions ago: no ORM, raw SQL only. The agent just introduced an ORM dependency. It had no memory of that decision.
+- You wrote the acceptance criteria after the implementation was already running. The agent built the right thing. Probably. No one can verify it.
+- The agent is mid-implementation and asks: "Should I create a new service or extend the existing one?" You answer. It interprets your answer differently than you meant. You find out two hours later.
+- A critical bug appears in production. You open a new session to fix it. The agent has no idea what the system does, what the constraints are, or what was decided last week.
+- You're not sure what the agent touched. You're not sure what it was allowed to touch. There's no record either way.
 
 None of these are bugs in the AI. They are symptoms of using a powerful execution engine without a governance layer.
 
@@ -39,9 +39,9 @@ You ←→ Discovery Agent     Understand. Define. Write Stories. Acceptance cri
           Working code
 ```
 
-**Discovery** — conversation with the Discovery Agent. Clarify what to build. Output: a Story with acceptance criteria in the backlog.
+**Discovery** — conversation with the Discovery Agent. Clarify what to build. Output: a Story with acceptance criteria in the backlog. Discovery reasons. It does not execute.
 
-**Delivery** — autonomous execution. The agent runs until criteria pass. No improvisation. No scope drift.
+**Delivery** — autonomous execution. The agent runs until criteria pass. No improvisation. No scope drift. Delivery executes. It never decides scope or intent.
 
 **The backlog is the contract.** Nothing gets built that isn't in it.
 
@@ -57,13 +57,15 @@ Four questions AI tools don't answer by themselves:
 The backlog. If it's not there with `status: refined`, the delivery agent doesn't touch it.
 
 **What does the agent know about this project?**
-Explicit memory — never auto-loaded. Agents load exactly what they need.
+Explicit memory — curated, versioned, agent-selected. The decision you made in session 1 is still binding in session 47. No re-explanation. No drift.
 
 **What counts as "done"?**
 Acceptance criteria. QA is a hard gate: PASS or FAIL, no "close enough."
 
 **Who decides what?**
-You decide what to build. The agent decides how. Separate tracks, clear handoff.
+You decide. GAAI provides the framework. Agents execute within it.
+
+Artefacts document. Memory informs. Rules constrain. Only the backlog authorizes execution.
 
 ---
 
@@ -77,8 +79,8 @@ your-project/
     ├── agents/      ← Discovery + Delivery + Bootstrap agent specs
     ├── skills/      ← 31 pure execution units (one thing, explicit output)
     ├── contexts/    ← rules, memory, backlog, artefacts
-    ├── workflows/   ← delivery loop, bootstrap, handoffs
-    ├── scripts/     ← bash utilities (backlog scheduler, health check)
+    ├── workflows/   ← delivery loop, bootstrap, handoffs, emergency rollback
+    ├── scripts/     ← bash utilities (health check, backlog scheduler, bootstrap, sync, snapshot)
     └── compat/      ← thin adapters for Claude Code, OpenCode, Codex CLI, Gemini CLI, Antigravity, Cursor, Windsurf
 ```
 
@@ -103,7 +105,7 @@ Or manually: copy `.gaai/` into your project root. Done.
 ## Five Rules (Non-Negotiable)
 
 1. Every execution unit must be in the backlog.
-2. Every agent action must reference a skill.
+2. Every agent action must reference a skill. If a skill appears to think, it is wrongly designed.
 3. Memory is explicit — agents select what to load, never auto-loaded.
 4. Artefacts document — they do not authorize. Only the backlog authorizes.
 5. When in doubt, stop and ask.
