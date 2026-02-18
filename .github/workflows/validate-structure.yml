@@ -1,0 +1,22 @@
+name: Validate GAAI Structure
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Framework Integrity Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate .gaai/ structure
+        run: bash .gaai/scripts/health-check.sh
+
+      - name: Validate artefact references
+        run: bash .gaai/scripts/artefact-sync.sh
