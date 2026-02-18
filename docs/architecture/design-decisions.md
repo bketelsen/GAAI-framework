@@ -77,13 +77,22 @@ Why GAAI is structured the way it is. Each decision is an Architecture Decision 
 
 ## ADR-006: Dual Track (Discovery vs Delivery)
 
-**Decision:** Discovery and Delivery are separate tracks with a formal handoff gate.
+**Decision:** Discovery and Delivery are separate tracks with a formal handoff gate. Planning and execution never share a context window.
 
 **Reasoning:**
 - The most common AI failure mode: building the wrong thing fast
 - Discovery is human-facing and produces artefacts that document decisions
 - Delivery is autonomous and executes only validated decisions
 - The separation forces the right question first: "is this the right thing to build?" before "how do we build it?"
+- Mixing planning and execution in a single LLM context degrades output quality and introduces cascading errors
+
+**Research basis:**
+
+- **GoalAct** — Chen et al. (2025). *Enhancing LLM-Based Agents via Global Planning and Hierarchical Execution.* NCIIP 2025 Best Paper. Demonstrates that separating global planning from hierarchical execution achieves +12.22% success rate on LegalAgentBench. [arXiv:2504.16563](https://arxiv.org/abs/2504.16563)
+
+- **Plan-then-Execute (P-t-E)** — Del Rosario et al. (2025). *Architecting Resilient LLM Agents: A Guide to Secure Plan-then-Execute Implementations.* Shows that separating the Planner from the Executor provides control-flow integrity, reduces prompt injection risk, and improves predictability over reactive (single-context) approaches like ReAct. [arXiv:2509.08646](https://arxiv.org/abs/2509.08646)
+
+- **ACE** — Zhang et al. (2025). *Agentic Context Engineering: Evolving Contexts for Self-Improving Language Models.* ICLR 2026. Demonstrates that context collapse and brevity bias degrade LLM agent performance when context management is not deliberate and structured. Explicit context engineering yields +10.6% on agent benchmarks. [arXiv:2510.04618](https://arxiv.org/abs/2510.04618)
 
 **Trade-off accepted:** Discovery adds time before any code is written. This is the point — it prevents rework.
 

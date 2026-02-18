@@ -10,7 +10,7 @@ Works with Claude Code, OpenCode, Codex CLI, Gemini CLI, Antigravity, Cursor, Wi
 
 ## The Problem
 
-You're using Claude Code, OpenCode, Codex CLI, Cursor, or another agentic coding tool. It writes code fast. Sometimes very good code. You ship more than before.
+You're using Claude Code, OpenCode, Codex CLI, Cursor, or another agentic coding tool. It writes code at light speed and the code quality which improves overtime isn't an issue anymore. With LLM, we are all shipping way more faster than before, but without the right steering system, speed and drifting becomes The problem.
 
 Then something starts breaking down — not the code. The process.
 
@@ -22,26 +22,6 @@ Then something starts breaking down — not the code. The process.
 - You're not sure what the agent is allowed to do on its own versus what it should ask you first.
 
 None of these are bugs in the AI. They are symptoms of using a powerful execution engine without a governance layer.
-
-An LLM is a V12 engine. Without the right steering system, speed becomes the problem.
-
----
-
-## What GAAI Adds
-
-Four questions AI tools don't answer by themselves:
-
-**What is the agent allowed to do right now?**
-The backlog. If it's not there with `status: refined`, the agent doesn't touch it.
-
-**What does the agent know about this project?**
-Explicit memory — never auto-loaded. Agents load exactly what they need.
-
-**What counts as "done"?**
-Acceptance criteria. QA is a hard gate: PASS or FAIL, no "close enough."
-
-**Who decides what?**
-You decide what to build. The agent decides how. Separate tracks, clear handoff.
 
 ---
 
@@ -62,6 +42,26 @@ You ←→ Discovery Agent     Understand. Define. Write Stories. Acceptance cri
 **Delivery** — autonomous execution. The agent runs until criteria pass. No improvisation. No scope drift.
 
 **The backlog is the contract.** Nothing gets built that isn't in it.
+
+Planning and execution never share a context window — by design. → [Research basis](docs/architecture/design-decisions.md#adr-006-dual-track-discovery-vs-delivery)
+
+---
+
+## What GAAI Adds
+
+Four questions AI tools don't answer by themselves:
+
+**What is the agent allowed to do right now?**
+The backlog. If it's not there with `status: refined`, the delivery agent doesn't touch it.
+
+**What does the agent know about this project?**
+Explicit memory — never auto-loaded. Agents load exactly what they need.
+
+**What counts as "done"?**
+Acceptance criteria. QA is a hard gate: PASS or FAIL, no "close enough."
+
+**Who decides what?**
+You decide what to build. The agent decides how. Separate tracks, clear handoff.
 
 ---
 
