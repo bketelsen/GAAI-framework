@@ -54,11 +54,13 @@ Activate after implementation is complete. This is a **hard quality gate**.
 - Behavior drift → FAIL
 - Known risk patterns from memory → FAIL
 
-### 5. Quality Heuristics
-- Code is readable
-- No obvious dead code
-- No extreme complexity introduced
-- Major quality smell → FAIL
+### 5. Quality Checks
+- Error-prone operations lack error handling → FAIL
+- External input enters functions without validation → FAIL
+- Identifiers are ambiguous or non-descriptive → FAIL
+- A function or module handles more than one responsibility without decomposition → FAIL
+- Dead code or unreachable branches present → FAIL
+- Tests were disabled or skipped to make the suite pass → FAIL
 
 ---
 

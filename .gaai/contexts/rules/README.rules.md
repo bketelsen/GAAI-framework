@@ -62,6 +62,18 @@ updated_at: YYYY-MM-DD
 
 ---
 
+## Adding a New Rule
+
+Before creating a new rule file:
+1. Read this index — verify no existing rule already covers the intent
+2. Identify the correct `category` (orchestration, skills, backlog, artefacts, memory)
+3. Use the file format above with a new `id` following the sequence
+4. Add an entry to this index
+
+A rule must define constraints, not workflows or reasoning. If it contains a process, it belongs in `workflows/`. If it defines agent behavior, it belongs in `agents/`.
+
+---
+
 **Start customizing here:**
 → [orchestration.rules.md](orchestration.rules.md) — agent authority and execution flows (edit this first)
 → [skills.rules.md](skills.rules.md) — skill invocation and isolation

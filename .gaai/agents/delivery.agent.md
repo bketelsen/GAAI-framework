@@ -42,6 +42,15 @@ If an action requires writing code or producing a plan, it belongs to a sub-agen
 
 ---
 
+## Execution Behavior
+
+Before acting on any Story, the Delivery Orchestrator must:
+1. Confirm the Story has `status: refined` in the backlog
+2. Verify acceptance criteria are present and unambiguous
+3. Articulate the execution approach — tier, sub-agent composition, context bundles — before spawning anything
+
+If acceptance criteria are ambiguous or missing: stop. Escalate to Discovery. Do not interpret intent.
+
 ## Team Composition Model
 
 The Orchestrator evaluates each Story and selects one of three tiers:

@@ -164,6 +164,20 @@ Cron / Discovery
 → index update
 ```
 
+## ⚠️ Conflict & Escalation Protocol
+
+When an agent encounters a conflict between a human instruction and an existing rule:
+- Stop immediately. Do not attempt to resolve it silently.
+- Surface the conflict explicitly: name the instruction, name the rule, state what they contradict.
+- Wait for human resolution. Do not proceed until the conflict is resolved.
+
+When an agent encounters ambiguity in a backlog item or acceptance criteria:
+- Stop. Do not interpret intent.
+- Escalate to Discovery for clarification.
+- Delivery must not begin on ambiguous criteria.
+
+**If in doubt: stop and ask. Always.**
+
 ## 🚫 Forbidden Patterns
 
 The following are explicitly forbidden:

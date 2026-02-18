@@ -67,6 +67,10 @@ Only proceed when all prerequisites are present and unambiguous.
 - Relevant tests exist and are runnable
 - Implementation report articulates decisions
 - Scope is unchanged
+- Error-prone operations (I/O, parsing, external calls) have explicit error handling — failures are surfaced, not silently swallowed
+- Functions exposed to external input validate arguments before executing
+- Identifiers are explicit and intention-revealing — no single-letter variables, no ambiguous abbreviations outside established conventions
+- Each function or module has a single, clear responsibility — if it does more than one thing, it must be decomposed
 
 ---
 
