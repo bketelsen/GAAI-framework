@@ -309,5 +309,5 @@ case "$TOOL" in
 esac
 
 echo ""
-echo "  Documentation: docs/README.md"
+echo "  Documentation: .gaai/GAAI.md"
 echo ""
