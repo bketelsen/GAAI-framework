@@ -10,13 +10,14 @@ set -euo pipefail
 #   AGENTS.md).
 #
 # Usage:
-#   bash install.sh [--target <path>] [--tool <tool>] [--yes]
+#   bash install.sh [--target <path>] [--tool <tool>] [--yes] [--wizard]
 #
 # Options:
 #   --target  directory to install into (default: current dir)
 #   --tool    ai-tool to configure: claude-code|cursor|windsurf|other
 #             (skips interactive prompt if provided)
 #   --yes     non-interactive: skip all prompts, use defaults
+#   --wizard  guided interactive setup with auto-detection
 #
 # Exit codes:
 #   0 — installed successfully
@@ -27,12 +28,14 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET="."
 TOOL=""
 YES=false
+WIZARD=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --target) TARGET="$2"; shift 2 ;;
     --tool)   TOOL="$2";   shift 2 ;;
     --yes)    YES=true;    shift ;;
+    --wizard) WIZARD=true; shift ;;
     *) >&2 echo "Unknown option: $1"; exit 1 ;;
   esac
 done
@@ -52,6 +55,117 @@ ask() {
   read -r -p "  $prompt " reply
   eval "$__var='$reply'"
 }
+
+# ── Tool auto-detection ────────────────────────────────────
+
+detect_tool() {
+  local dir="$1"
+  if [[ -d "$dir/.claude" ]]; then
+    echo "claude-code"
+  elif [[ -d "$dir/.cursor" ]]; then
+    echo "cursor"
+  elif [[ -d "$dir/.windsurf" ]]; then
+    echo "windsurf"
+  else
+    echo ""
+  fi
+}
+
+tool_label() {
+  case "$1" in
+    claude-code) echo "Claude Code" ;;
+    cursor)      echo "Cursor"      ;;
+    windsurf)    echo "Windsurf"    ;;
+    other)       echo "Other (generic AGENTS.md)" ;;
+    *)           echo "Unknown"     ;;
+  esac
+}
+
+# ── Wizard mode ────────────────────────────────────────────
+
+if [[ "$WIZARD" == "true" ]]; then
+  VERSION="$(cat "$SCRIPT_DIR/.gaai/VERSION" 2>/dev/null || echo '?')"
+  echo ""
+  echo "╔══════════════════════════════════════════╗"
+  echo "║        GAAI Setup Wizard v$VERSION           ║"
+  echo "╚══════════════════════════════════════════╝"
+  echo ""
+  echo "  This wizard will install the GAAI framework into"
+  echo "  your project and configure it for your AI tool."
+  echo ""
+  echo "────────────────────────────────────────────"
+  echo "  Step 1 of 3 — Target directory"
+  echo "────────────────────────────────────────────"
+  echo ""
+  echo "  Where should GAAI be installed?"
+  echo "  Press Enter to use the current directory."
+  echo ""
+  ask "Target directory [.]:" WIZARD_TARGET
+  if [[ -n "$WIZARD_TARGET" ]]; then
+    TARGET="$WIZARD_TARGET"
+  fi
+  if [[ ! -d "$TARGET" ]]; then
+    fail "Directory not found: $TARGET"
+  fi
+  TARGET="$(cd "$TARGET" && pwd)"
+  echo ""
+  echo "  → Installing into: $TARGET"
+
+  echo ""
+  echo "────────────────────────────────────────────"
+  echo "  Step 2 of 3 — AI tool"
+  echo "────────────────────────────────────────────"
+  echo ""
+
+  DETECTED="$(detect_tool "$TARGET")"
+  if [[ -n "$DETECTED" ]]; then
+    echo "  Detected: $(tool_label "$DETECTED") (based on existing config directory)"
+    echo ""
+    ask "Use $(tool_label "$DETECTED")? [Y/n]:" TOOL_CONFIRM
+    if [[ "$TOOL_CONFIRM" =~ ^[nN]$ ]]; then
+      DETECTED=""
+    fi
+  fi
+
+  if [[ -z "$DETECTED" ]]; then
+    echo "  Which AI tool do you use?"
+    echo "    1) Claude Code"
+    echo "    2) Cursor"
+    echo "    3) Windsurf"
+    echo "    4) Other (generic AGENTS.md)"
+    echo ""
+    ask "Enter number [1-4]:" TOOL_CHOICE
+    case "$TOOL_CHOICE" in
+      1) DETECTED="claude-code" ;;
+      2) DETECTED="cursor"      ;;
+      3) DETECTED="windsurf"    ;;
+      4) DETECTED="other"       ;;
+      *) warn "Invalid choice — defaulting to generic (AGENTS.md)"; DETECTED="other" ;;
+    esac
+  fi
+
+  TOOL="$DETECTED"
+
+  echo ""
+  echo "────────────────────────────────────────────"
+  echo "  Step 3 of 3 — Confirm"
+  echo "────────────────────────────────────────────"
+  echo ""
+  echo "  Ready to install:"
+  echo "    Directory : $TARGET"
+  echo "    AI tool   : $(tool_label "$TOOL")"
+  if [[ -d "$TARGET/.gaai" ]]; then
+    echo "    Note      : .gaai/ already exists — will be overwritten"
+  fi
+  echo ""
+  ask "Proceed? [Y/n]:" PROCEED
+  if [[ "$PROCEED" =~ ^[nN]$ ]]; then
+    echo ""
+    echo "  Installation cancelled."
+    exit 0
+  fi
+  YES=true  # skip individual prompts from here — wizard already confirmed
+fi
 
 # ── Pre-flight ─────────────────────────────────────────────
 
@@ -110,7 +224,14 @@ if [[ -z "$TOOL" ]] && [[ "$YES" == "false" ]]; then
     *) warn "Invalid choice — defaulting to generic (AGENTS.md)"; TOOL="other" ;;
   esac
 elif [[ -z "$TOOL" ]]; then
-  TOOL="other"
+  # --yes without --tool: try auto-detection before falling back to other
+  DETECTED_AUTO="$(detect_tool "$TARGET")"
+  if [[ -n "$DETECTED_AUTO" ]]; then
+    TOOL="$DETECTED_AUTO"
+    info "Auto-detected AI tool: $(tool_label "$TOOL")"
+  else
+    TOOL="other"
+  fi
 fi
 
 # ── Deploy adapter ───────────────────────────────────────

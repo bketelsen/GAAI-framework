@@ -10,18 +10,27 @@
 
 ## Installation
 
-```bash
-# 1. Clone the GAAI framework
-git clone https://github.com/gaai-framework/gaai-framework.git /tmp/gaai
-cd /tmp/gaai
+From your project root — one command:
 
-# 2. Run the installer from your project root
-bash install.sh
+```bash
+git clone https://github.com/Fr-e-d/GAAI-framework.git /tmp/gaai && \
+  bash /tmp/gaai/install.sh --target . --tool claude-code --yes && \
+  rm -rf /tmp/gaai
+```
+
+Replace `--tool claude-code` with `--tool cursor` or `--tool windsurf` as needed.
+
+For an interactive install (tool selector prompt):
+
+```bash
+git clone https://github.com/Fr-e-d/GAAI-framework.git /tmp/gaai && \
+  bash /tmp/gaai/install.sh --target . && \
+  rm -rf /tmp/gaai
 ```
 
 The installer will:
 1. Check prerequisites
-2. Ask which AI tool you use
+2. Ask which AI tool you use (interactive mode) or use `--tool` flag
 3. Copy `.gaai/` into your project
 4. Deploy the right tool adapter (CLAUDE.md, .mdc file, or AGENTS.md)
 5. Run a health check

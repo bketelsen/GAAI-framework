@@ -91,19 +91,44 @@ Markdown + YAML + bash. Readable by humans and any AI tool.
 
 ---
 
-## 30-Second Install
+## Install
 
-From your project root:
+### Ask your AI assistant (Claude Code, Cursor, Windsurf…)
+
+Paste this into your AI tool's chat — it will handle the rest:
+
+```
+Install the GAAI framework into my current project.
+Clone https://github.com/Fr-e-d/GAAI-framework.git to /tmp/gaai,
+run: bash /tmp/gaai/install.sh --target . --yes
+then delete /tmp/gaai.
+```
+
+The installer auto-detects your AI tool from existing config directories (`.claude/`, `.cursor/`, `.windsurf/`).
+
+---
+
+### CLI — git clone
 
 ```bash
 git clone https://github.com/Fr-e-d/GAAI-framework.git /tmp/gaai && \
-  bash /tmp/gaai/install.sh --target . --tool claude-code --yes && \
+  bash /tmp/gaai/install.sh --wizard && \
   rm -rf /tmp/gaai
 ```
 
-Replace `--tool claude-code` with `--tool cursor`, `--tool windsurf`, or `--tool other` to match your AI tool.
+The wizard asks where to install and which AI tool you use.
 
-Or manually: copy `.gaai/` into your project root. Done.
+---
+
+### Downloaded ZIP or GitHub Desktop
+
+Once the repo is on your machine, open a terminal in that folder and run:
+
+```bash
+bash install.sh --wizard
+```
+
+The wizard will ask for the target project directory.
 
 ---
 
