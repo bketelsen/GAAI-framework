@@ -40,7 +40,7 @@ If your tool is not listed above:
 
 ## Changing Your AI Tool After Install
 
-To switch to a different AI tool, re-run `install.sh` from the GAAI framework repo with the new tool:
+To switch to a different AI tool, re-run `install.sh` from the GAAI framework repo with `--tool` set explicitly:
 
 ```bash
 rm -rf /tmp/gaai
@@ -50,6 +50,8 @@ rm -rf /tmp/gaai
 ```
 
 Replace `--tool claude-code` with `--tool cursor`, `--tool windsurf`, or `--tool other`.
+
+Always pass `--tool` explicitly. Do not rely on auto-detection — it requires the tool's config directory to already exist in the target project.
 
 There is no separate `deploy-adapter.sh` script. `install.sh` is the only installer.
 

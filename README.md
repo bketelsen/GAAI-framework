@@ -99,14 +99,15 @@ Paste this into your AI tool's chat — it will handle the rest:
 
 ```
 Install the GAAI framework into my current project.
-Run these commands:
+First, identify which AI tool you are (claude-code, cursor, windsurf, or other).
+Then run these commands:
   rm -rf /tmp/gaai
   git clone https://github.com/Fr-e-d/GAAI-framework.git /tmp/gaai
-  bash /tmp/gaai/install.sh --target . --yes
+  bash /tmp/gaai/install.sh --target . --tool <your-tool> --yes
   rm -rf /tmp/gaai
 ```
 
-The installer auto-detects your AI tool from existing config directories (`.claude/`, `.cursor/`, `.windsurf/`).
+The AI will substitute `<your-tool>` with the correct value (`claude-code`, `cursor`, `windsurf`, or `other`).
 
 ---
 
