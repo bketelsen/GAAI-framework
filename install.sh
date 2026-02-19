@@ -291,9 +291,10 @@ echo ""
 case "$TOOL" in
   claude-code)
     echo "  Next steps:"
-    echo "    Existing project? → /gaai-bootstrap"
-    echo "    New project?      → fill in .gaai/contexts/memory/memory/project/context.md"
-    echo "                        then /gaai-discover"
+    echo "    1. Restart your Claude Code session (slash commands load at startup)"
+    echo "    2. Existing project? → /gaai-bootstrap"
+    echo "       New project?      → fill in .gaai/contexts/memory/memory/project/context.md"
+    echo "                           then /gaai-discover"
     ;;
   cursor)
     echo "  Next steps:"

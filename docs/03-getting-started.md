@@ -41,6 +41,8 @@ That's it. Your project now has a `.gaai/` folder.
 
 ## First Session
 
+> **Claude Code users:** Restart your Claude Code session after install. Slash commands (`/gaai-bootstrap`, `/gaai-discover`, etc.) are loaded at startup — they won't appear in an already-open session.
+
 ### Existing project? Run Bootstrap first.
 
 The Bootstrap Agent scans your codebase and builds project memory.
