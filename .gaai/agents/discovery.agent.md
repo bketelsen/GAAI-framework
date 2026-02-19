@@ -174,12 +174,13 @@ Do NOT use for:
 
 When activated on a project with no existing codebase and no memory files, the Discovery Agent must:
 
-1. Ask the human a focused set of questions to understand the project:
-   - What does the project do? Who is it for?
-   - What are the key technical constraints or stack choices already decided?
-   - What does success look like?
-2. Invoke `memory-ingest` with the answers to populate `contexts/memory/project/context.md`
-3. Confirm memory is seeded before proceeding to artefact generation
+1. Ask questions **one at a time** — wait for the human's answer before asking the next question. Never batch multiple questions in a single message.
+   - Q1: What does the project do, and who is it for?
+   - Q2: What technical constraints or stack decisions are already made?
+   - Q3: What does success look like in 90 days?
+2. After each answer, acknowledge what was understood before asking the next question.
+3. Invoke `memory-ingest` with the collected answers to populate `contexts/memory/project/context.md`.
+4. Confirm memory is seeded before proceeding to artefact generation.
 
 **The human never fills in memory files manually. Discovery does it through conversation.**
 
