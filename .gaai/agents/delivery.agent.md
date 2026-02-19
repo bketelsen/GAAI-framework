@@ -129,7 +129,10 @@ Tier 2 or 3? → assemble context bundle
            ↓
            collect {id}.qa-report.md
            ↓
-           PASS → mark Story done → proceed
+           PASS → collect {id}.memory-delta.md
+                  → if verdict DRIFT_DETECTED or NEW_KNOWLEDGE_FOUND or DRIFT_AND_NEW_KNOWLEDGE:
+                      flag Discovery with delta report before marking done
+                  → mark Story done → proceed
            FAIL → re-spawn Implementation Sub-Agent with qa-report (max 2 re-spawns)
                   → re-spawn QA Sub-Agent
                   → if still FAIL after 2 cycles → ESCALATE
@@ -147,6 +150,7 @@ All artefacts are written by sub-agents and read by the Orchestrator:
 | `{id}.execution-plan.md` | Planning Sub-Agent | Implementation Sub-Agent, QA Sub-Agent |
 | `{id}.impl-report.md` | Implementation Sub-Agent | QA Sub-Agent, Orchestrator |
 | `{id}.qa-report.md` | QA Sub-Agent | Orchestrator |
+| `{id}.memory-delta.md` | QA Sub-Agent (PASS only) | Orchestrator → Discovery |
 | `{id}.micro-delivery-report.md` | MicroDelivery Sub-Agent | Orchestrator |
 | `{id}.plan-blocked.md` | Planning Sub-Agent (on failure) | Orchestrator (triggers escalation) |
 

@@ -19,9 +19,12 @@ Spawned by the Delivery Orchestrator. Validates the implementation against accep
 ```
 SPAWN   ← Orchestrator provides context bundle (Story + acceptance criteria + impl-report)
 EXECUTE ← Reviews implementation against each acceptance criterion
+PASS?   → Run memory-alignment-check → write {id}.memory-delta.md
 HANDOFF ← Writes contexts/artefacts/reports/{id}.qa-report.md with verdict
 DIE     ← Terminates; context window released
 ```
+
+`memory-alignment-check` runs only on PASS. On FAIL or ESCALATE, skip it — no delta report produced.
 
 ---
 
@@ -42,6 +45,7 @@ On remediation pass: also receives previous `{id}.qa-report.md` to verify that p
 - `qa-review` — validate implementation against acceptance criteria and rules
 - `remediate-failures` — during remediation loop: diagnose root cause, produce corrected implementation
 - `consistency-check` — verify implementation did not drift from plan or rules
+- `memory-alignment-check` — after PASS verdict only: compare implementation footprint against memory, produce delta report for Discovery
 
 ---
 
@@ -69,16 +73,18 @@ The remediation loop is contained within the QA Sub-Agent's context window. This
 
 ---
 
-## Handoff Artefact
+## Handoff Artefacts
 
-Writes to: `contexts/artefacts/reports/{id}.qa-report.md`
-
-The artefact must include:
+Always writes: `contexts/artefacts/reports/{id}.qa-report.md`
 - Verdict: PASS / FAIL / ESCALATE
 - Per-criterion result (pass/fail with evidence)
 - Rule violations (if any)
 - Remediation attempts log (if applicable)
 - Escalation reason (if ESCALATE)
+
+On PASS only: `contexts/artefacts/reports/{id}.memory-delta.md`
+- Output of `memory-alignment-check`
+- Read by the Delivery Orchestrator to flag Discovery if needed
 
 ---
 
