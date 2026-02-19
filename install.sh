@@ -241,9 +241,19 @@ COMPAT_DIR="$TARGET/.gaai/compat"
 echo ""
 info "Deploying adapter for: $TOOL"
 
+backup_if_exists() {
+  local file="$1"
+  if [[ -f "$file" ]]; then
+    local bak="${file}.gaai-bak"
+    cp "$file" "$bak"
+    warn "$(basename "$file") already exists — backed up to $(basename "$bak")"
+  fi
+}
+
 case "$TOOL" in
   claude-code)
     # CLAUDE.md → project root
+    backup_if_exists "$TARGET/CLAUDE.md"
     cp "$COMPAT_DIR/claude-code.md" "$TARGET/CLAUDE.md"
     success "CLAUDE.md deployed to $TARGET/"
 
@@ -264,6 +274,7 @@ case "$TOOL" in
 
   windsurf|other)
     # AGENTS.md → project root
+    backup_if_exists "$TARGET/AGENTS.md"
     cp "$COMPAT_DIR/windsurf.md" "$TARGET/AGENTS.md"
     success "AGENTS.md deployed to $TARGET/"
     ;;
