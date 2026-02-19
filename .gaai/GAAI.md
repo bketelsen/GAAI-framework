@@ -49,9 +49,9 @@ Welcome. This is the `.gaai/` folder — the GAAI framework living inside your p
 **If you want to customize rules:**
 → Edit files in `contexts/rules/`. Start with `orchestration.rules.md`.
 
-**If you are setting up a new tool:**
-→ Read `compat/COMPAT.md` for the compatibility matrix.
-→ Copy the right adapter from `compat/{your-tool}/`.
+**If you want to switch to a different AI tool:**
+→ Read `compat/COMPAT.md` for the compatibility matrix and instructions.
+→ Re-run `install.sh --tool <tool> --yes` from the GAAI framework repo. There is no other adapter deployment mechanism.
 
 ---
 
