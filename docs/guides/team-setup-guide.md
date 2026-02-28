@@ -13,16 +13,16 @@ GAAI's memory and backlog are files in your repo. This is intentional — it mak
 ## What Goes in Git
 
 **Always commit:**
-- `.gaai/contexts/rules/` — all rule files
-- `.gaai/contexts/memory/memory/project/context.md` — project fundamentals
-- `.gaai/contexts/memory/memory/patterns/conventions.md` — conventions
-- `.gaai/contexts/backlog/active.backlog.yaml` — current backlog
-- `.gaai/contexts/backlog/done/` — completed work archive
-- `.gaai/contexts/artefacts/` — all artefact files
-- `.gaai/agents/`, `.gaai/skills/`, `.gaai/workflows/` — framework files
+- `.gaai/core/contexts/rules/` — all rule files
+- `.gaai/project/contexts/memory/memory/project/context.md` — project fundamentals
+- `.gaai/project/contexts/memory/memory/patterns/conventions.md` — conventions
+- `.gaai/project/contexts/backlog/active.backlog.yaml` — current backlog
+- `.gaai/project/contexts/backlog/done/` — completed work archive
+- `.gaai/project/contexts/artefacts/` — all artefact files
+- `.gaai/core/agents/`, `.gaai/core/skills/`, `.gaai/core/workflows/` — framework files
 
 **Consider carefully:**
-- `.gaai/contexts/memory/memory/decisions/_log.md` — accumulates quickly; commit on milestones, not every session
+- `.gaai/project/contexts/memory/memory/decisions/_log.md` — accumulates quickly; commit on milestones, not every session
 
 **Do not commit:**
 - Session notes or draft artefacts that haven't passed validation
@@ -93,16 +93,16 @@ The `scripts/backlog-scheduler.sh` helps coordinate without stepping on each oth
 
 ```bash
 # Start of session: see what's available
-.gaai/scripts/backlog-scheduler.sh --list active.backlog.yaml
+.gaai/core/scripts/backlog-scheduler.sh --list active.backlog.yaml
 
 # Pick what to work on next (highest priority, unblocked, not in-progress)
-.gaai/scripts/backlog-scheduler.sh --next active.backlog.yaml
+.gaai/core/scripts/backlog-scheduler.sh --next active.backlog.yaml
 
 # See full dependency tree — who is waiting on whom
-.gaai/scripts/backlog-scheduler.sh --graph active.backlog.yaml
+.gaai/core/scripts/backlog-scheduler.sh --graph active.backlog.yaml
 
 # Sprint planning: find priority misalignments before they cause delays
-.gaai/scripts/backlog-scheduler.sh --conflicts active.backlog.yaml
+.gaai/core/scripts/backlog-scheduler.sh --conflicts active.backlog.yaml
 ```
 
 The `--graph` view is especially useful for parallel delivery: it shows at a glance which Stories are unblocked (✅), which are in flight (🔄), and which are waiting on a dependency (🔒). Teams can use this to assign work without accidentally pulling a Story whose dependency is still blocked.
@@ -142,10 +142,10 @@ Memory files in git are shared knowledge. Some guidelines:
 When a new engineer joins:
 
 1. Clone the repo (they get `.gaai/` automatically)
-2. Run: `bash .gaai/scripts/health-check.sh` — verifies framework integrity
-3. Read: `.gaai/GAAI.md` — 5 minutes
-4. Read: `.gaai/contexts/memory/memory/project/context.md` — project context
-5. Read: `.gaai/contexts/memory/memory/patterns/conventions.md` — team conventions
+2. Run: `bash .gaai/core/scripts/health-check.sh` — verifies framework integrity
+3. Read: `.gaai/core/GAAI.md` — 5 minutes
+4. Read: `.gaai/project/contexts/memory/memory/project/context.md` — project context
+5. Read: `.gaai/project/contexts/memory/memory/patterns/conventions.md` — team conventions
 6. First task: pick a `refined` Story from the backlog, run Delivery
 
 The memory files are the onboarding documentation. Keep them accurate.
@@ -160,14 +160,14 @@ Minimum recommended CI gate:
 
 ```yaml
 - name: GAAI structure validation
-  run: bash .gaai/scripts/health-check.sh
+  run: bash .gaai/core/scripts/health-check.sh
 ```
 
 Add artefact sync validation for regulated projects:
 
 ```yaml
 - name: GAAI artefact sync
-  run: bash .gaai/scripts/artefact-sync.sh
+  run: bash .gaai/core/scripts/artefact-sync.sh
 ```
 
 ---

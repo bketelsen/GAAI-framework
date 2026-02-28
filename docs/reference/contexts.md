@@ -21,8 +21,8 @@ Each subdirectory has a `README.{type}.md` that is the source of truth for that 
 
 ## Rules
 
-**Location:** `.gaai/contexts/rules/`
-**Source of truth:** `.gaai/contexts/rules/README.rules.md`
+**Location:** `.gaai/core/contexts/rules/`
+**Source of truth:** `.gaai/core/contexts/rules/README.rules.md`
 
 Rules constrain agent behavior. They are loaded explicitly — never automatically. `orchestration.rules.md` is always loaded first.
 
@@ -32,8 +32,8 @@ The framework ships with a baseline set of rules. **Add your own** by creating `
 
 ## Memory
 
-**Location:** `.gaai/contexts/memory/`
-**Source of truth:** `.gaai/contexts/memory/README.memory.md`
+**Location:** `.gaai/project/contexts/memory/`
+**Source of truth:** `.gaai/project/contexts/memory/README.memory.md`
 
 Memory is **never auto-loaded**. Agents select what they need using `memory-retrieve`. This prevents context pollution and token waste.
 
@@ -45,8 +45,8 @@ The memory structure includes project context, decisions log, patterns, summarie
 
 ## Backlog
 
-**Location:** `.gaai/contexts/backlog/`
-**Source of truth:** `.gaai/contexts/backlog/README.backlog.md`
+**Location:** `.gaai/project/contexts/backlog/`
+**Source of truth:** `.gaai/project/contexts/backlog/README.backlog.md`
 
 The backlog is the **sole authorization mechanism**. Nothing is executed without a backlog item.
 
@@ -68,8 +68,8 @@ For backlog item format and full state machine, see `README.backlog.md` and `_te
 
 ## Artefacts
 
-**Location:** `.gaai/contexts/artefacts/`
-**Source of truth:** `.gaai/contexts/artefacts/README.artefacts.md`
+**Location:** `.gaai/project/contexts/artefacts/`
+**Source of truth:** `.gaai/project/contexts/artefacts/README.artefacts.md`
 
 Artefacts document intent and decisions. They are **evidence** — not authorization.
 

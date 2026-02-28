@@ -78,12 +78,15 @@ A single `.gaai/` folder you drop into any project:
 ```
 your-project/
 └── .gaai/
-    ├── agents/      ← Discovery + Delivery + Bootstrap agent specs
-    ├── skills/      ← 31 pure execution units (one thing, explicit output)
-    ├── contexts/    ← rules, memory, backlog, artefacts
-    ├── workflows/   ← delivery loop, bootstrap, handoffs, emergency rollback
-    ├── scripts/     ← bash utilities (health check, backlog scheduler, bootstrap, sync, snapshot)
-    └── compat/      ← thin adapters for Claude Code, OpenCode, Codex CLI, Gemini CLI, Antigravity, Cursor, Windsurf
+    ├── core/            ← framework (synced via git subtree)
+    │   ├── agents/      ← Discovery + Delivery + Bootstrap agent specs
+    │   ├── skills/      ← 37 pure execution units (one thing, explicit output)
+    │   ├── contexts/    ← framework rules
+    │   ├── workflows/   ← delivery loop, bootstrap, handoffs, emergency rollback
+    │   ├── scripts/     ← bash utilities (health check, backlog scheduler, bootstrap, sync, snapshot)
+    │   └── compat/      ← thin adapters for Claude Code, OpenCode, Codex CLI, Gemini CLI, Antigravity, Cursor, Windsurf
+    └── project/         ← your project data (created by installer)
+        └── contexts/    ← rules, memory, backlog, artefacts
 ```
 
 **No SDK. No npm package. No pip install. No external services.**
@@ -194,7 +197,7 @@ Delivery:   "E03S01 complete. No further Stories in backlog."
 | Antigravity | `AGENTS.md` |
 | Cursor | `.cursor/rules/*.mdc` |
 | Windsurf | `AGENTS.md` |
-| Any other | Read `.gaai/GAAI.md` directly |
+| Any other | Read `.gaai/core/GAAI.md` directly |
 
 One canonical source (`.gaai/`). Thin adapters per tool. No duplication.
 
@@ -227,13 +230,13 @@ Fork or clone. Run `install.sh`. Adapt the rules, memory, and skills to your pro
 - [Core Concepts](docs/02-core-concepts.md) — dual track, backlog, memory, skills, artefacts
 - [Vibe Coder Guide](docs/guides/vibe-coder-guide.md) — fast daily workflow
 - [Senior Engineer Guide](docs/guides/senior-engineer-guide.md) — governance, rules, CI
-- [Skills Index](.gaai/skills/README.skills.md) — all 31 skills
+- [Skills Index](.gaai/core/skills/README.skills.md) — all 37 skills
 - [Tool Compatibility](docs/reference/tool-compatibility.md) — Claude Code, OpenCode, Codex CLI, Gemini CLI, Antigravity, Cursor, Windsurf
 - [Design Decisions](docs/architecture/design-decisions.md) — why GAAI is structured the way it is (ADRs + research basis)
 
 ---
 
-MIT — see [LICENSE](LICENSE)
+ELv2 — see [LICENSE](LICENSE)
 
 ---
 
