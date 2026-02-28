@@ -17,9 +17,9 @@ List the files modified and why.
 ## Testing
 
 How was this tested?
-- [ ] Ran `bash .gaai/scripts/health-check.sh` — passes
+- [ ] Ran `bash .gaai/core/scripts/health-check.sh --core-dir .gaai/core` — passes
 - [ ] Reviewed affected documentation for accuracy
 
 ---
 
-**Note:** GAAI uses a Fork & Own model. This repo accepts bug fixes and documentation corrections only. New skills, new agents, and framework feature additions are not accepted upstream — implement them in your own fork. See [Fork & Own](docs/contributing/fork-and-own.md).
+**Note:** GAAI uses a Fork & Own model. This repo accepts bug fixes and documentation corrections only. New skills, new agents, and framework feature additions are not accepted upstream — implement them in your own fork. See [CONTRIBUTING.md](../CONTRIBUTING.md).
