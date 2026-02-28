@@ -45,7 +45,7 @@ Each skill lives in a named directory. The directory name matches the `name` fie
 ---
 name: skill-name
 description: One sentence: WHAT it does and WHEN to activate it.
-license: MIT
+license: ELv2
 compatibility: Works with any filesystem-based AI coding agent
 metadata:
   author: gaai-framework

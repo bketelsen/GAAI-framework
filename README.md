@@ -223,7 +223,7 @@ Fork or clone. Run `install.sh`. Adapt the rules, memory, and skills to your pro
 
 ---
 
-MIT — see [LICENSE](LICENSE)
+ELv2 — see [LICENSE](LICENSE)
 
 ---
 

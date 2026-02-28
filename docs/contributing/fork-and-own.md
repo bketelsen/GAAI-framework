@@ -77,7 +77,7 @@ Most value from GAAI is in the structure and conventions — not in constantly f
 
 ## What We Ask
 
-GAAI is MIT licensed. You can do anything with your fork.
+GAAI is ELv2 licensed. You can use, modify, and fork freely. The only restriction: you cannot offer GAAI as a competing hosted/managed service.
 
 If you find bugs or documentation errors in the upstream framework, please report them at [GitHub Issues](https://github.com/gaai-framework/gaai-framework/issues).
 
