@@ -4,31 +4,22 @@
 
 - [ ] Bug fix (broken behavior in an existing file)
 - [ ] Documentation fix (typo, unclear explanation, broken link)
-- [ ] New framework skill
-- [ ] Framework improvement (agent, rule, workflow, script, compat adapter)
 - [ ] Other (describe below)
 
-## What does this PR do?
+## What does this PR change?
 
-<!-- Brief description: what was the problem or gap, and what does this PR add/fix? -->
+A brief description of what was wrong and what this fixes.
 
 ## Files changed
 
-<!-- List the files modified/added and why. -->
-
-## Checklist
-
-- [ ] PR targets the `staging` branch
-- [ ] Changes are in `core/` only (not project-specific data)
-- [ ] `bash .gaai/core/scripts/health-check.sh --core-dir .gaai/core` passes
-- [ ] Commit messages follow convention (`feat:`, `fix:`, `docs:`, `chore:`)
-- [ ] New skills include a complete `SKILL.md` (frontmatter + Purpose + Procedure + Non-Goals)
-- [ ] No project-specific paths or data leaked into framework files
+List the files modified and why.
 
 ## Testing
 
-<!-- How was this tested? Which scenarios were validated? -->
+How was this tested?
+- [ ] Ran `bash .gaai/scripts/health-check.sh` — passes
+- [ ] Reviewed affected documentation for accuracy
 
 ---
 
-> See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines and what is accepted upstream.
+**Note:** GAAI uses a Fork & Own model. This repo accepts bug fixes and documentation corrections only. New skills, new agents, and framework feature additions are not accepted upstream — implement them in your own fork. See [Fork & Own](docs/contributing/fork-and-own.md).
