@@ -217,8 +217,7 @@ Fork or clone. Run `install.sh`. Adapt the rules, memory, and skills to your pro
 
 | Branch | Purpose |
 |---|---|
-| `staging` | Active development — PRs target this branch |
-| `production` | Stable releases — merged from staging |
+| `main` | Default branch — stable, source of truth |
 | `_subtree-export` | Auto-generated. Contains `.gaai/core/` content at root for `git subtree` consumers. Do not use directly. |
 
 ---
