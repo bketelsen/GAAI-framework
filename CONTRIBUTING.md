@@ -42,6 +42,12 @@ If you're fixing bugs or improving docs, read [docs/contributing/DEVELOPMENT.md]
 
 ---
 
+## Intellectual Property
+
+All code in this repository, including AI-assisted contributions, is the intellectual property of Frédéric Geens and licensed under ELv2. AI tools (such as Claude Code) are used as development tools — they do not hold authorship or rights over any part of this project.
+
+---
+
 ## Feedback
 
 Have thoughts about the framework's design? Open a [feedback issue](.github/ISSUE_TEMPLATE/feedback.md). We read everything, but we may not act on every suggestion.
