@@ -39,6 +39,7 @@ After running the installer:
 | `/gaai-discover` | Activate Discovery Agent |
 | `/gaai-deliver` | Run Delivery Loop |
 | `/gaai-status` | Show project status summary |
+| `/gaai-update` | Update framework core or switch AI tool adapter |
 
 ### CLAUDE.md
 

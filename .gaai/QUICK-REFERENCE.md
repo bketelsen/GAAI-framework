@@ -8,6 +8,7 @@
 | `/gaai-discover` | Start Discovery — clarify intent, create Stories with acceptance criteria |
 | `/gaai-deliver` | Start Delivery — execute the next refined Story from the backlog |
 | `/gaai-status` | Show current backlog state and memory summary |
+| `/gaai-update` | Update framework core or switch AI tool adapter |
 
 ## Starting a Session
 
