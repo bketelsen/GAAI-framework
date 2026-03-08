@@ -14,7 +14,7 @@ From your project root — one command:
 
 ```bash
 git clone https://github.com/Fr-e-d/GAAI-framework.git /tmp/gaai && \
-  bash /tmp/gaai/install.sh --target . --tool claude-code --yes && \
+  bash /tmp/gaai/.gaai/core/scripts/install.sh --target . --tool claude-code --yes && \
   rm -rf /tmp/gaai
 ```
 
@@ -24,7 +24,7 @@ For an interactive install (tool selector prompt):
 
 ```bash
 git clone https://github.com/Fr-e-d/GAAI-framework.git /tmp/gaai && \
-  bash /tmp/gaai/install.sh --target . && \
+  bash /tmp/gaai/.gaai/core/scripts/install.sh --target . && \
   rm -rf /tmp/gaai
 ```
 

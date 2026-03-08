@@ -23,7 +23,7 @@ This is the most common starting point. You've been prompting your AI directly �
 **Step 1 — Install GAAI**
 
 ```bash
-bash install.sh
+bash .gaai/core/scripts/install.sh
 ```
 
 **Step 2 — Run Bootstrap**

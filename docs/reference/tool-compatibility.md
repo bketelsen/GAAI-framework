@@ -27,7 +27,7 @@ The best-supported tool. Slash commands provide one-keystroke agent activation.
 
 ### Setup
 
-After `bash install.sh`:
+After running the installer:
 1. `CLAUDE.md` is deployed to your project root — Claude Code loads it automatically
 2. `.claude/commands/` contains the slash command definitions
 
@@ -64,7 +64,7 @@ These tools use `AGENTS.md` for context loading. Setup is identical across all o
 
 ### Setup
 
-After `bash install.sh` (select "Other" at the tool prompt):
+After running the installer (select "Other" at the tool prompt):
 - `AGENTS.md` is deployed to your project root
 
 Or manually: copy `.gaai/core/compat/windsurf.md` to `AGENTS.md` in your project root.
@@ -93,7 +93,7 @@ Setup uses `.mdc` rules files. No slash commands.
 
 ### Setup
 
-After `bash install.sh`:
+After running the installer:
 - `.cursor/rules/gaai.mdc` is deployed with `alwaysApply: true`
 
 ### What the .mdc file does
@@ -127,7 +127,7 @@ Setup uses `AGENTS.md`. No slash commands.
 
 ### Setup
 
-After `bash install.sh`:
+After running the installer:
 - `AGENTS.md` is deployed to your project root
 
 ### What AGENTS.md does
@@ -157,7 +157,7 @@ The framework functions correctly regardless of how it's activated — the files
 ## The Framework Is Tool-Agnostic
 
 GAAI's governance is in the files, not in the tool. Changing AI tools requires only:
-1. Deploying the right compat adapter (`install.sh` handles this)
+1. Deploying the right compat adapter (the installer handles this)
 2. Using the appropriate activation method (slash command vs manual prompt)
 
 All memory, rules, backlog, and artefacts remain unchanged.

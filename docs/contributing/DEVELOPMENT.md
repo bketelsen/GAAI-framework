@@ -2,7 +2,7 @@
 
 This file is for contributors working **on this repository itself** (fixing bugs, updating docs, improving scripts).
 
-If you are a **user** looking to use GAAI in your project, read `.gaai/GAAI.md` instead — or run `install.sh`.
+If you are a **user** looking to use GAAI in your project, read `.gaai/GAAI.md` instead — or run `bash .gaai/core/scripts/install.sh`.
 
 ---
 
@@ -11,7 +11,7 @@ If you are a **user** looking to use GAAI in your project, read `.gaai/GAAI.md` 
 This repo contains:
 - `.gaai/` — the GAAI framework (what users copy into their projects)
 - `docs/` — full documentation
-- `install.sh` / `install-check.sh` — installer scripts
+- `.gaai/core/scripts/install.sh` / `install-check.sh` — installer scripts
 - Standard repo files (README, LICENSE, CHANGELOG, CONTRIBUTING)
 
 ---

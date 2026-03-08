@@ -9,7 +9,7 @@ No theory. Just the steps.
 ## Before You Begin
 
 You have:
-- GAAI installed (`bash install.sh` from the repo root)
+- GAAI installed (`bash .gaai/core/scripts/install.sh` from the repo root)
 - Your AI tool open (Claude Code, Cursor, or Windsurf)
 - A project — existing codebase or new idea
 

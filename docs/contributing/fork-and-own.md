@@ -29,7 +29,7 @@ GAAI is a GitHub template repository.
 **Option 2: Clone**
 ```bash
 git clone https://github.com/gaai-framework/gaai-framework.git /tmp/gaai
-bash /tmp/gaai/install.sh
+bash /tmp/gaai/.gaai/core/scripts/install.sh
 ```
 
 The installer copies `.gaai/` into your project. You own the files.
