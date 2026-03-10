@@ -1,0 +1,213 @@
+name: Resolve contrib/* conflicts
+
+on:
+  push:
+    branches: [main]
+
+# Prevent parallel runs — one resolution at a time
+concurrency:
+  group: contrib-conflict-resolution
+  cancel-in-progress: true
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    # Skip if the push was made by this workflow (prevent loops)
+    if: github.actor != 'github-actions[bot]'
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Find conflicting contrib/* PRs
+        id: find-conflicts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Checking open contrib/* PRs for conflicts..."
+
+          # List open PRs with contrib/ prefix
+          gh pr list --state open --json number,headRefName,mergeable \
+            --jq '.[] | select(.headRefName | startswith("contrib/"))' | \
+          jq -c '.' | while read -r pr; do
+            PR_NUMBER=$(echo "$pr" | jq -r '.number')
+            PR_BRANCH=$(echo "$pr" | jq -r '.headRefName')
+            MERGEABLE=$(echo "$pr" | jq -r '.mergeable')
+
+            echo "PR #$PR_NUMBER ($PR_BRANCH): mergeable=$MERGEABLE"
+
+            if [ "$MERGEABLE" = "CONFLICTING" ]; then
+              echo "$PR_NUMBER" >> /tmp/conflicting_prs.txt
+            fi
+          done
+
+          if [ -f /tmp/conflicting_prs.txt ]; then
+            echo "has_conflicts=true" >> "$GITHUB_OUTPUT"
+            echo "Found conflicting PRs: $(cat /tmp/conflicting_prs.txt | tr '\n' ' ')"
+          else
+            echo "has_conflicts=false" >> "$GITHUB_OUTPUT"
+            echo "No conflicting PRs found"
+          fi
+
+      - name: Resolve conflicts with AI
+        if: steps.find-conflicts.outputs.has_conflicts == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          set -euo pipefail
+
+          MAX_RESOLUTIONS=3
+          resolved_count=0
+
+          while IFS= read -r PR_NUMBER; do
+            [ -z "$PR_NUMBER" ] && continue
+
+            if [ "$resolved_count" -ge "$MAX_RESOLUTIONS" ]; then
+              echo "⚠️  Max resolutions ($MAX_RESOLUTIONS) reached — stopping"
+              break
+            fi
+
+            PR_BRANCH=$(gh pr view "$PR_NUMBER" --json headRefName --jq '.headRefName')
+            echo ""
+            echo "═══════════════════════════════════════════"
+            echo "Resolving PR #$PR_NUMBER ($PR_BRANCH)"
+            echo "═══════════════════════════════════════════"
+
+            # Check if already resolved once (guard against loops)
+            if gh pr view "$PR_NUMBER" --json labels --jq '.labels[].name' 2>/dev/null | grep -q "conflict-resolved"; then
+              echo "⚠️  PR #$PR_NUMBER already has 'conflict-resolved' label — skipping"
+              continue
+            fi
+
+            # Fetch the contrib branch
+            git fetch origin "$PR_BRANCH"
+            git checkout "$PR_BRANCH"
+            git reset --hard "origin/$PR_BRANCH"
+
+            # Configure git for commits
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+
+            # Attempt merge with main
+            if git merge origin/main --no-edit 2>/dev/null; then
+              echo "✅ Merge succeeded without conflicts (race condition resolved)"
+              git push origin "$PR_BRANCH" --force-with-lease
+              resolved_count=$((resolved_count + 1))
+              git checkout main
+              git reset --hard origin/main
+              continue
+            fi
+
+            # Get conflicted files
+            CONFLICTED_FILES=$(git diff --name-only --diff-filter=U)
+
+            if [ -z "$CONFLICTED_FILES" ]; then
+              echo "⚠️  Merge failed but no conflict markers — aborting"
+              git merge --abort
+              git checkout main
+              git reset --hard origin/main
+              continue
+            fi
+
+            echo "Conflicted files:"
+            echo "$CONFLICTED_FILES"
+
+            resolution_failed=false
+
+            while IFS= read -r file; do
+              [ -z "$file" ] && continue
+              echo "  🔧 Resolving: $file"
+
+              # Read conflicted content
+              conflict_content=$(cat "$file")
+
+              # Get main version for context
+              main_version=$(git show "origin/main:$file" 2>/dev/null || echo "(file did not exist on main)")
+
+              # Call Anthropic API directly
+              response=$(curl -s --max-time 30 https://api.anthropic.com/v1/messages \
+                -H "x-api-key: $ANTHROPIC_API_KEY" \
+                -H "anthropic-version: 2023-06-01" \
+                -H "content-type: application/json" \
+                -d "$(jq -n \
+                  --arg conflict "$conflict_content" \
+                  --arg main "$main_version" \
+                  --arg fname "$file" \
+                  '{
+                    model: "claude-haiku-4-5-20251001",
+                    max_tokens: 8192,
+                    messages: [{
+                      role: "user",
+                      content: ("You are resolving a git merge conflict.\n\nRULES:\n- Preserve ALL changes from BOTH sides. Do not drop any addition.\n- If both sides modify the same lines, intelligently combine them.\n- Remove all conflict markers (<<<<<<< ======= >>>>>>>).\n- Output ONLY the resolved file content. No explanation, no markdown fences, no preamble.\n\nFILE: " + $fname + "\n\nCONFLICT VERSION (with markers):\n" + $conflict + "\n\nMAIN BRANCH VERSION (for context):\n" + $main)
+                    }]
+                  }')" 2>/dev/null)
+
+              # Extract resolved content
+              resolved=$(echo "$response" | jq -r '.content[0].text // empty')
+
+              if [ -z "$resolved" ]; then
+                echo "  ⚠️  AI returned empty response for $file"
+                error_msg=$(echo "$response" | jq -r '.error.message // empty')
+                [ -n "$error_msg" ] && echo "  Error: $error_msg"
+                resolution_failed=true
+                continue
+              fi
+
+              # Verify no conflict markers remain
+              if echo "$resolved" | grep -q "^<<<<<<<\|^=======\|^>>>>>>>"; then
+                echo "  ⚠️  AI output still contains conflict markers for $file"
+                resolution_failed=true
+                continue
+              fi
+
+              # Write resolved content and stage
+              printf '%s\n' "$resolved" > "$file"
+              git add "$file"
+              echo "  ✅ Resolved: $file"
+
+            done <<< "$CONFLICTED_FILES"
+
+            if [ "$resolution_failed" = true ]; then
+              echo "⚠️  Some files could not be resolved for PR #$PR_NUMBER"
+              git merge --abort 2>/dev/null || true
+              gh pr comment "$PR_NUMBER" --body "⚠️ Automated conflict resolution failed — manual intervention required."
+              git checkout main
+              git reset --hard origin/main
+              continue
+            fi
+
+            # Commit the resolution
+            git commit -m "resolve: merge conflicts (AI-assisted)
+
+          Automated conflict resolution by resolve-contrib-conflicts workflow."
+
+            # Push (force-with-lease: safe on ephemeral contrib/* branch)
+            if git push origin "$PR_BRANCH" --force-with-lease; then
+              echo "✅ PR #$PR_NUMBER conflicts resolved"
+              gh pr edit "$PR_NUMBER" --add-label "conflict-resolved" 2>/dev/null || true
+
+              # Re-enable auto-merge
+              gh pr merge "$PR_NUMBER" --auto --merge 2>/dev/null || true
+
+              resolved_count=$((resolved_count + 1))
+            else
+              echo "⚠️  Push failed for PR #$PR_NUMBER"
+              git merge --abort 2>/dev/null || true
+            fi
+
+            # Return to main for next iteration
+            git checkout main
+            git reset --hard origin/main
+
+          done < /tmp/conflicting_prs.txt
+
+          echo ""
+          echo "═══════════════════════════════════════════"
+          echo "Resolution complete: $resolved_count PR(s) resolved"
+          echo "═══════════════════════════════════════════"
