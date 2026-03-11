@@ -41,7 +41,7 @@ Two slash commands. Discovery reasons — it never executes. Delivery executes �
 
 **Copy the `.gaai/` folder into your project.** That's it.
 
-Download from GitHub, drop `.gaai/` into your project root, and tell your AI tool: *"Read `.gaai/README.md` and bootstrap this project."*
+Download from GitHub, drop `.gaai/` into your project root, and tell your AI tool: *"Read `.gaai/core/README.md` and bootstrap this project."*
 
 <details open>
 <summary>Option A — Ask your AI tool to do it</summary>
@@ -107,11 +107,11 @@ None of these are bugs in the AI. They are symptoms of using a powerful executio
 ```
 your-project/
 └── .gaai/
-    ├── README.md              ← start here (human + AI onboarding)
-    ├── GAAI.md                ← full reference
-    ├── QUICK-REFERENCE.md     ← daily cheat sheet
-    ├── VERSION
     ├── core/                  ← framework engine (updated via git subtree)
+    │   ├── README.md          ← start here (human + AI onboarding)
+    │   ├── GAAI.md            ← full reference
+    │   ├── QUICK-REFERENCE.md ← daily cheat sheet
+    │   ├── VERSION
     │   ├── agents/            ← Discovery + Delivery + Bootstrap agent specs
     │   ├── skills/            ← 47 execution units
     │   ├── contexts/rules/    ← framework rules
@@ -170,7 +170,7 @@ bash .gaai/core/scripts/daemon-start.sh   # starts the daemon
 | Antigravity | `AGENTS.md` |
 | Cursor | `.cursor/rules/*.mdc` |
 | Windsurf | `AGENTS.md` |
-| Any other | Read `.gaai/README.md` directly |
+| Any other | Read `.gaai/core/README.md` directly |
 
 One canonical source (`.gaai/`). Thin adapters per tool. No duplication. The framework functions identically across all tools — the difference is activation convenience, not capability.
 
