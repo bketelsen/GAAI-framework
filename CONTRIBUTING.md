@@ -10,7 +10,7 @@ GAAI is not a library you contribute skills or features to. It is a **design pat
 3. Adapt the rules, memory, and skills to your project's needs
 4. The fork is yours — you own it
 
-**There is no upstream to contribute to** for new skills, new agents, or new rules. Those belong in your fork.
+New skills, agents, or rules belong in your fork — not upstream. That's by design.
 
 ---
 
@@ -25,14 +25,6 @@ Found something wrong in the framework files — a broken script, an incorrect r
 ### Documentation Fixes
 
 Typos, unclear wording, broken links in `docs/` or `.gaai/**/*.md`? Open a PR with your fix. Keep it minimal.
-
-### What We Do NOT Accept
-
-- New skills (add them to your own fork)
-- New agents (add them to your own fork)
-- New rule files (add them to your own fork)
-- Refactoring of existing content
-- Opinionated changes to philosophy or approach
 
 ---
 
@@ -55,4 +47,4 @@ All code in this repository, including AI-assisted contributions, is the intelle
 
 ## Feedback
 
-Have thoughts about the framework's design? Open a [feedback issue](.github/ISSUE_TEMPLATE/feedback.md). We read everything, but we may not act on every suggestion.
+Have thoughts about the framework's design? Open a [feedback issue](.github/ISSUE_TEMPLATE/feedback.md). We read everything.
