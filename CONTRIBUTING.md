@@ -38,7 +38,12 @@ Typos, unclear wording, broken links in `docs/` or `.gaai/**/*.md`? Open a PR wi
 
 ## Working on This Repo
 
-If you're fixing bugs or improving docs, read [docs/contributing/DEVELOPMENT.md](docs/contributing/DEVELOPMENT.md) for repo structure, constraints, commit conventions, and CI info.
+If you're fixing bugs or improving docs, keep these constraints in mind:
+
+- **Never break `.gaai/` integrity.** The health check (`core/scripts/health-check.sh`) must always pass.
+- **Never rename skill directories.** Skill directory names are referenced in agent files.
+- **Never rename rule files.** Rule filenames are referenced in agents and compat adapters.
+- **Keep compat adapters thin.** Files in `core/compat/` must reference canonical files — never duplicate content.
 
 ---
 
