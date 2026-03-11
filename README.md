@@ -117,10 +117,15 @@ your-project/
     │   ├── contexts/rules/    ← framework rules
     │   ├── workflows/         ← delivery loop, bootstrap, handoffs
     │   ├── scripts/           ← bash utilities
+    │   ├── hooks/             ← git hook dispatcher + core hooks
     │   └── compat/            ← thin adapters per AI tool
     └── project/               ← your project data (never overwritten by updates)
         ├── agents/            ← custom project agents
         ├── skills/            ← custom project skills
+        ├── scripts/           ← project-specific scripts
+        ├── hooks/             ← project-specific git hooks
+        ├── workflows/         ← custom workflow overrides
+        ├── content/           ← content production assets
         └── contexts/
             ├── rules/         ← project rule overrides
             ├── memory/        ← decisions, patterns, project context
