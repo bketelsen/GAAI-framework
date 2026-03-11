@@ -128,7 +128,7 @@ your-project/
         ├── content/           ← content production assets
         └── contexts/
             ├── rules/         ← project rule overrides
-            ├── memory/        ← decisions, patterns, project context
+            ├── memory/        ← persistent memory (decisions, patterns, context)
             ├── backlog/       ← execution queue (active, blocked, done)
             └── artefacts/     ← stories, epics, plans, reports
 ```
