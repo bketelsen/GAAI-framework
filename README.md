@@ -1,3 +1,7 @@
+![Version](https://img.shields.io/badge/version-2.1.0-blue)
+![License: ELv2](https://img.shields.io/badge/license-ELv2-green)
+![No SDK](https://img.shields.io/badge/stack-markdown%20%2B%20yaml%20%2B%20bash-orange)
+
 # GAAI — Governed Agentic AI Infrastructure
 
 A `.gaai/` folder you drop into any project. Markdown + YAML + bash. No SDK. No package. No external services.
