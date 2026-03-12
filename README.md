@@ -23,16 +23,17 @@ Discovery:  "Got it. Checking memory for existing middleware patterns..."
 Discovery:  "Done. E03S01 is ready. Run /gaai-deliver when you're ready."
 
 You:        /gaai-deliver
+            → Spawns an isolated Delivery Agent (clean context — no Discovery bleed)
 Delivery:   → Reads E03S01 from backlog
             → Loads middleware conventions from memory
             → Planning Sub-Agent: produces execution plan
             → Implementation Sub-Agent: adds rate-limiting middleware
             → QA Sub-Agent: all acceptance criteria PASS
-            → Story marked done, archived
+            → Story marked done, PR merged to staging
 Delivery:   "E03S01 complete. No further Stories in backlog."
 ```
 
-Two slash commands. Discovery reasons — it never executes. Delivery executes — it never decides scope. The backlog is the contract between them.
+Two slash commands. Two **isolated contexts**. Discovery reasons — it never executes. Delivery executes — it never decides scope. They never share a context window, so system prompts can't contaminate each other. The backlog is the contract between them.
 
 > **Want it fully autonomous?** The Delivery Daemon polls your backlog and auto-delivers
 > stories in parallel — no human in the loop. [See Automation →](#automation-optional)
@@ -102,9 +103,9 @@ None of these are bugs in the AI. They are symptoms of using a powerful executio
 
 ## How It Works
 
-**Discovery** — you talk to the Discovery Agent. Clarify what to build. Output: a Story with acceptance criteria in the backlog. Discovery reasons. It does not execute.
+**Discovery** — you talk to the Discovery Agent in your current session. Clarify what to build. Output: a Story with acceptance criteria in the backlog. Discovery reasons. It does not execute.
 
-**Delivery** — autonomous execution. The Delivery Agent orchestrates specialized sub-agents (Planning, Implementation, QA) per Story. No improvisation. No scope drift.
+**Delivery** — always runs in an **isolated context**. `/gaai-deliver` spawns a separate agent with a clean context window — no Discovery residue, no conversation history bleed. The Delivery Agent orchestrates specialized sub-agents (Planning, Implementation, QA) per Story. No improvisation. No scope drift. No context contamination.
 
 **The backlog is the contract.** Nothing gets built that isn't in it.
 
