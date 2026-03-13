@@ -42,17 +42,17 @@ Two slash commands. Two **isolated contexts**. Discovery reasons — it never ex
 
 ---
 
-## The Problem It Solves
+## Why GAAI
 
-Your AI coding tool writes code fast. But without a governance layer, speed creates drift:
+AI coding tools are fast — but without governance, speed creates drift: agents touch code they shouldn't, forget decisions from prior sessions, and ship features no one can verify against criteria. GAAI adds the missing layer.
 
-- The agent ships the feature — and quietly refactors two unrelated modules you didn't mention
-- You agreed three sessions ago: no ORM, raw SQL only. The agent just introduced an ORM dependency — it had no memory of that decision
-- Acceptance criteria were written after implementation. No one can verify the agent built the right thing
-- A critical bug appears. You open a new session. The agent has no idea what the system does or what was decided last week
-- You're not sure what the agent touched or what it was allowed to touch. There's no record either way
+**Built for developers who already have product clarity** — solo founders, senior engineers, small teams who know what to build and need an agent that ships it reliably without going off-script. If you've ever said "the agent broke something it wasn't supposed to touch," this is for you.
 
-None of these are bugs in the AI. They are symptoms of using a powerful execution engine without a governance layer.
+| vs. | Difference |
+|-----|-----------|
+| AGENTS.md / cursor rules | Solves one session. GAAI adds cross-session memory, scope authorization, and structured delivery. |
+| BMAD-METHOD | Simulates a multi-agent Agile team. GAAI is lighter on Discovery, more rigid on Delivery governance. |
+| LangGraph / AutoGen / CrewAI | Code-first orchestration for building AI systems. GAAI governs the use of AI coding tools. Different abstraction level. |
 
 ---
 
@@ -97,18 +97,6 @@ No SDK. No npm package. No pip install. Markdown + YAML + bash. Readable by huma
 
 ---
 
-## Who This Is For
-
-GAAI is built for the developer — solo founder, small team, senior engineer — who is already using AI coding tools seriously and has started running into the governance problems that come with that.
-
-It is particularly well-suited for **solo SaaS founders who know what they want to build**. You do not need to simulate a 12-person product team. You need an agent that helps you turn what's in your head into executable Stories, and another that ships them reliably without going off-script.
-
-Discovery in GAAI is conversational and intentionally lightweight: it structures your thinking, not a committee's deliberation. If you already have product clarity, this is a feature — not a limitation.
-
-If you are still in the "getting AI to write my first feature" phase, GAAI adds more structure than you need right now. If you have ever said "the agent broke something it wasn't supposed to touch" — GAAI is for you.
-
----
-
 ## Install (30 seconds)
 
 **Copy the `.gaai/` folder into your project.** That's it.
@@ -141,7 +129,7 @@ The installer copies `.gaai/` and deploys the right adapter for your tool (CLAUD
 
 </details>
 
-<details open>
+<details>
 <summary>Option B — CLI</summary>
 
 ```bash
@@ -151,16 +139,6 @@ git clone https://github.com/Fr-e-d/GAAI-framework.git /tmp/gaai && \
 ```
 
 </details>
-
----
-
-## Compared to Other Approaches
-
-**vs. AGENTS.md / cursor rules:** A well-written AGENTS.md solves context loss for a single session. It does not solve scope drift, cross-session memory, or the authorization problem. GAAI is what comes after you've maxed out what a good AGENTS.md can do.
-
-**vs. BMAD-METHOD:** BMAD simulates a multi-agent Agile team with specialized personas (PM, Architect, Developer, QA, and more) and rich collaborative workflows. It is powerful when you want AI to co-drive product thinking. GAAI makes a different trade-off: a lighter Discovery track optimized for developers who already have clarity on what to build, paired with a Delivery track that is more rigidly governed. Different tools for adjacent problems — the key difference is in Delivery: GAAI's governance model is structural, not persona-based.
-
-**vs. LangGraph / AutoGen / CrewAI:** Code-first orchestration frameworks for building AI systems. GAAI is a governance layer for using AI coding tools. Different abstraction level entirely.
 
 ---
 

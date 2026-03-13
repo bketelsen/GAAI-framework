@@ -4,12 +4,12 @@ What's planned for GAAI. This is a public signal of direction — not a commitme
 
 ---
 
-## v2.0.0 — Current Release
+## v2.1.1 — Current Release
 
 **Status:** Complete
 
 - `.gaai/` restructured into `core/` (framework) + `project/` (user data via scaffolding)
-- 47 skills across discovery (6), delivery (11), and cross (30) categories
+- 40 core skills across discovery (6), delivery (11), and cross (23) categories
 - License: ELv2 (Elastic License 2.0)
 - Tool adapters: Claude Code, Cursor, Windsurf, OpenCode, Codex CLI, Gemini CLI, Antigravity
 - CI validation via `health-check.sh`
