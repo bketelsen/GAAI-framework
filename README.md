@@ -151,11 +151,32 @@ GAAI works manually with `/gaai-deliver`. But if your project uses git with a `s
 - Coordinates across devices via git push
 - Monitors health, retries failures, archives completed work
 
+**Three scripts, three roles:**
+
+| Script | Role |
+|--------|------|
+| `daemon-setup.sh` | One-time setup — checks prerequisites, configures git hooks and permissions |
+| `delivery-daemon.sh` | The daemon itself — runs in the foreground, polls the backlog, launches deliveries |
+| `daemon-start.sh` | Lifecycle wrapper — start/stop/status/restart, runs the daemon in background (tmux or nohup) |
+
 **Setup (2 minutes):**
 
 ```bash
-bash .gaai/core/scripts/daemon-setup.sh   # checks prereqs, configures
-bash .gaai/core/scripts/daemon-start.sh   # starts the daemon
+bash .gaai/core/scripts/daemon-setup.sh        # one-time: checks prereqs, configures
+```
+
+**Run interactively** (macOS — recommended for visibility):
+
+```bash
+bash .gaai/core/scripts/delivery-daemon.sh --max-concurrent 2
+```
+
+**Run as background service** (VPS/headless):
+
+```bash
+bash .gaai/core/scripts/daemon-start.sh --max-concurrent 3   # starts in tmux/nohup
+bash .gaai/core/scripts/daemon-start.sh --status              # check state
+bash .gaai/core/scripts/daemon-start.sh --stop                # graceful shutdown
 ```
 
 > Requires: git repo, `staging` branch, [Claude Code CLI](https://claude.com/claude-code), python3, tmux (Linux) or Terminal.app (macOS).
