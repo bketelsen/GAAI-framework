@@ -2,10 +2,10 @@
 # Source of truth: .gaai/core/skills/*/SKILL.md and .gaai/project/skills/*/SKILL.md
 # Regenerate: invoke build-skills-indices skill
 
-generated_at: 2026-03-15
-total: 73
-core: 47
-project: 26
+generated_at: 2026-03-16
+total: 69
+core: 48
+project: 21
 
 discovery:
   - id: SKILL-CNT-011
@@ -444,14 +444,23 @@ cross:
     tags: []
     updated_at: 2026-02-26
     path: project/skills/cross/domain-knowledge-research/SKILL.md
-  - id: SKILL-PRJ-001
-    name: framework-sync
-    source: project
-    description: "Sync the GAAI framework between this project and the GAAI-framework OSS repo via git subtree. Covers pull (OSS → project), push (project → OSS), and status check."
+  - id: SKILL-CRS-025
+    name: eval-run
+    source: core
+    description: "Evaluate any output file against a structured evals.yaml assertions file and produce a score report with per-assertion pass/fail results. Activate when the Discovery Agent runs the Skill Optimize protocol to measure output quality or detect regressions after skill instruction changes."
     category: cross
     track: cross-cutting
     tags: []
-    updated_at: 2026-02-28
+    updated_at: 2026-03-15
+    path: core/skills/cross/eval-run/SKILL.md
+  - id: SKILL-PRJ-001
+    name: framework-sync
+    source: project
+    description: "Sync the GAAI framework between this project and the GAAI-framework OSS repo. Push to OSS is automatic (post-commit hook). Pull and status check are manual."
+    category: cross
+    track: cross-cutting
+    tags: []
+    updated_at: 2026-03-16
     path: project/skills/cross/framework-sync/SKILL.md
   - id: SKILL-FRICTION-RETROSPECTIVE-001
     name: friction-retrospective
@@ -471,15 +480,6 @@ cross:
     tags: []
     updated_at: 2026-02-26
     path: core/skills/cross/generate-build-in-public-content/SKILL.md
-  - id: SKILL-CRS-021
-    name: generate-build-in-public-content
-    source: project
-    description: "Generate build-in-public content drafts from completed delivery artefacts. Applies the Golden Circle (WHY → HOW → WHAT) to transform stories, decisions, and metrics into ready-to-review content pieces (X threads, blog snippets, metrics posts). Activate automatically after each story reaches `done` status."
-    category: cross
-    track: cross-cutting
-    tags: []
-    updated_at: 2026-02-26
-    path: project/skills/cross/generate-build-in-public-content/SKILL.md
   - id: i18n-extract
     name: i18n-extract
     source: core
@@ -489,15 +489,6 @@ cross:
     tags: []
     updated_at: 2026-03-02
     path: core/skills/cross/i18n-extract/SKILL.md
-  - id: i18n-extract
-    name: i18n-extract
-    source: project
-    description: "Scan codebase for hardcoded strings that should be internationalised, classify by domain and priority, and produce a structured extraction report for translation workflows."
-    category: analysis
-    track: cross-cutting
-    tags: []
-    updated_at: 2026-03-02
-    path: project/skills/cross/i18n-extract/SKILL.md
   - id: i18n-glossary-sync
     name: i18n-glossary-sync
     source: core
@@ -507,15 +498,6 @@ cross:
     tags: []
     updated_at: 2026-03-02
     path: core/skills/cross/i18n-glossary-sync/SKILL.md
-  - id: i18n-glossary-sync
-    name: i18n-glossary-sync
-    source: project
-    description: "Maintain a canonical i18n glossary file — sync new terms across all language pairs, detect drift, flag missing translations, and enforce consistent terminology across the codebase."
-    category: analysis
-    track: cross-cutting
-    tags: []
-    updated_at: 2026-03-02
-    path: project/skills/cross/i18n-glossary-sync/SKILL.md
   - id: i18n-validate
     name: i18n-validate
     source: core
@@ -525,15 +507,6 @@ cross:
     tags: []
     updated_at: 2026-03-02
     path: core/skills/cross/i18n-validate/SKILL.md
-  - id: i18n-validate
-    name: i18n-validate
-    source: project
-    description: "Validate translation completeness and consistency across all locale files — detect missing keys, untranslated strings, format mismatches, and glossary violations."
-    category: analysis
-    track: cross-cutting
-    tags: []
-    updated_at: 2026-03-02
-    path: project/skills/cross/i18n-validate/SKILL.md
   - id: idiomatique-translate
     name: idiomatique-translate
     source: core
@@ -543,15 +516,6 @@ cross:
     tags: []
     updated_at: 2026-03-02
     path: core/skills/cross/idiomatique-translate/SKILL.md
-  - id: idiomatique-translate
-    name: idiomatique-translate
-    source: project
-    description: "Translate strings idiomatically across multiple target languages using a project glossary, preserving tone, domain terminology, and format placeholders while flagging untranslatable content."
-    category: content
-    track: cross-cutting
-    tags: []
-    updated_at: 2026-03-02
-    path: project/skills/cross/idiomatique-translate/SKILL.md
   - id: SKILL-MEMORY-ALIGNMENT-CHECK-001
     name: memory-alignment-check
     source: core

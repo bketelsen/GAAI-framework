@@ -4,22 +4,29 @@
 
 ```
 .gaai/
-├── core/          ← Framework (synced with GAAI OSS repo via git subtree)
+├── core/          ← Framework (auto-synced to OSS via post-commit hook)
 │   └── README.md  ← This file
 └── project/       ← Project-specific data (memory, backlog, artefacts, custom skills)
 ```
 
-- `core/` is **git subtree**-synced with the [GAAI-framework](https://github.com/Fr-e-d/GAAI-framework) OSS repo
+- `core/` changes are **automatically contributed to OSS** on every commit (via post-commit hook → PR → auto-merge)
 - `project/` is **local only** — never synced to OSS
 
 ---
 
-## Core Principle
+## Framework Sync (Automatic)
 
-**Your project changes DO NOT auto-sync to OSS.** All syncing is explicit and intentional:
-- `.gaai/core/` changes stay local in your project
-- `.gaai/project/` is always 100% local (never pushed to OSS)
-- Updates from OSS are pulled on-demand
+When you commit changes to `.gaai/core/`, a post-commit hook automatically:
+1. Detects `.gaai/core/` was modified
+2. Clones the OSS repo (shallow)
+3. Replaces `core/` with your local version
+4. Creates a PR on `Fr-e-d/GAAI-framework`
+5. Schedules auto-merge
+
+**You don't need to do anything.** The sync is transparent and non-blocking.
+
+Setup: `git config core.hooksPath .githooks` (done by `install-hooks.sh`).
+Logs: `.gaai/project/.sync-log`.
 
 ---
 
@@ -36,24 +43,9 @@ Full reference: see `GAAI.md` → "Branch Model & Automation".
 
 ---
 
-## Pulling Framework Updates
+## New Projects: Install GAAI
 
 ```bash
-# One-time: add the OSS remote
-git remote add gaai-framework https://github.com/Fr-e-d/GAAI-framework.git
-git fetch gaai-framework
-
-# Pull latest improvements from OSS
-git subtree pull --prefix=.gaai gaai-framework main --squash
-
-# Or pin to a specific release tag
-git subtree pull --prefix=.gaai gaai-framework v2.1.2 --squash
-```
-
----
-
-## New Projects: Initialize .gaai/
-
-```bash
-git subtree add --prefix=.gaai gaai-framework main --squash
+# From the GAAI-framework repo
+bash /tmp/gaai/install.sh --target . --tool claude-code --yes
 ```

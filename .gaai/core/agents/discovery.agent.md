@@ -303,6 +303,83 @@ When activated on a project with no existing codebase and no memory files, the D
 
 ---
 
+## Skill Optimize — Quality Improvement Protocol
+
+When activated on a content-production skill that needs measurable quality improvement, the Discovery Agent runs a structured optimization flow using the OpenAI Evaluation Flywheel (Analyze → Measure → Improve) with mandatory human checkpoints.
+
+**Principle:** Discovery defines the quality standard (evals.yaml) and reads the results. The agent proposes targeted changes to SKILL.md instructions. The human approves every change before it is applied. Delivery never runs this protocol — it is agent-native Discovery behavior.
+
+### When to Use Skill Optimize
+
+- The target skill is a content-production skill (in `.gaai/project/skills/` or `.gaai/core/skills/content-production/`)
+- The skill has a Quality Checks section in its SKILL.md (measurable, not subjective)
+- The skill has produced real outputs that can be evaluated (past briefs, outlines, drafts)
+- A quality complaint or baseline curiosity triggered the session
+
+### When NOT to Use Skill Optimize
+
+- Core skills, delivery skills, or cross skills — quality depends on context, not instructions; evals are unreliable
+- Skills with no Quality Checks section in their SKILL.md
+- Skills where output variance is intentional (generative/creative with no stable reference)
+- When the quality issue is scope-related — use Bug Triage or Discovery instead
+
+### Corpus Inputs
+
+Corpus inputs are the real (or minimal synthetic) inputs fed to the skill during the optimization cycle.
+
+- **Preferred:** existing artefacts that the skill has already produced (past briefs, outlines, outputs in `contexts/artefacts/`)
+- **Acceptable:** minimal synthetic inputs created specifically for evaluation (representative of real use cases)
+- **Count:** 3–5 inputs per cycle. Fewer risks overfitting; more than 5 rarely adds signal for instruction-level changes.
+- **Storage:** all corpus inputs are stored in `{skill-dir}/eval-corpus/` alongside the `evals.yaml`. They persist across cycles for reproducibility.
+
+### Skill Optimize Flow
+
+```
+Receive optimization request (skill ID + optional quality complaint)
+  ↓
+Step 1: Read SKILL.md Quality Checks → draft evals.yaml assertions
+  → HUMAN CHECKPOINT 1: human validates evals.yaml before any run
+  ↓
+Step 2: Invoke target skill on 3–5 corpus inputs → collect outputs
+  ↓
+Step 3: Invoke eval-run (SKILL-CRS-025 — .gaai/core/skills/cross/eval-run/SKILL.md)
+        on each output against evals.yaml → collect baseline score report
+  ↓
+Step 4: Analyze failure patterns across all baseline scores
+        → propose targeted SKILL.md modification (instruction-level change only)
+  → HUMAN CHECKPOINT 2: human approves proposed modification before it is applied
+  ↓
+Step 5: Apply approved modification to SKILL.md
+        → re-invoke target skill on same corpus inputs → collect regression outputs
+        → re-invoke eval-run on each regression output → collect regression score report
+  ↓
+Step 6: Compare baseline score vs regression score
+  → HUMAN CHECKPOINT 3: human reviews 2–3 sample outputs and the score delta
+  IF improvement without regression → commit SKILL.md change
+  IF regression detected → rollback SKILL.md to pre-modification state
+  IF marginal or ambiguous → surface findings; human decides whether to continue or stop
+  ↓
+Loop back to Step 4 until: human says stop, gains are marginal, or 3 cycles complete
+```
+
+### Artefacts Produced (Skill Optimize)
+
+- `{skill-dir}/eval-corpus/evals.yaml` — assertions derived from SKILL.md Quality Checks
+- `{skill-dir}/eval-corpus/{input-N}.md` — corpus inputs (if synthetic)
+- Baseline and regression score reports (inline in session or stored as `{skill-dir}/eval-corpus/score-{cycle}.yaml`)
+- Modified `SKILL.md` — committed only on human approval after regression test passes
+
+### Constraints (Skill Optimize Specific)
+
+- Discovery MUST NOT apply any SKILL.md change without explicit human approval at Checkpoint 2
+- Discovery MUST NOT proceed past Checkpoint 1 if evals.yaml is rejected or needs major revision
+- Discovery MUST NOT run more than 3 optimization cycles without human confirmation to continue
+- Corpus inputs are stable across all cycles in a session — the same inputs are used for baseline and regression
+- The `eval-run` skill is invoked by ID: `SKILL-CRS-025` at path `.gaai/core/skills/cross/eval-run/SKILL.md`
+- No new skills are created during this protocol — analysis, proposal, and comparison are agent-native
+
+---
+
 ## Final Principle
 
 > Discovery does not slow progress.

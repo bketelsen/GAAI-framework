@@ -15,7 +15,7 @@ Welcome. This is the `.gaai/` folder — the GAAI framework living inside your p
 ├── QUICK-REFERENCE.md      ← daily cheat sheet
 ├── VERSION                 ← framework version
 │
-├── core/                   ← framework engine (updated via git subtree)
+├── core/                   ← framework engine (auto-synced to OSS via post-commit hook)
 │   ├── agents/             ← who reasons and decides
 │   ├── skills/             ← what gets executed
 │   ├── contexts/rules/     ← governance (what is allowed)

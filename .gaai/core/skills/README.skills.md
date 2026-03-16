@@ -135,6 +135,14 @@ To regenerate after adding or modifying a skill:
 
 ---
 
+## Cross Skills (selected)
+
+| Skill | ID | Description |
+|---|---|---|
+| `eval-run` | SKILL-CRS-025 | Evaluate any output file against a structured evals.yaml assertions file and produce a score report with per-assertion pass/fail results. Activate when the Discovery Agent runs the Skill Optimize protocol to measure output quality or detect regressions. |
+
+---
+
 → [discovery/](discovery/) — skills that produce artefacts
 → [delivery/](delivery/) — skills that orchestrate and execute
 → [cross/](cross/) — skills for memory, context, governance
