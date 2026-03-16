@@ -4,7 +4,7 @@ What's planned for GAAI. This is a public signal of direction — not a commitme
 
 ---
 
-## v2.1.1 — Current Release
+## v2.1.3 — Current Release
 
 **Status:** Complete
 
@@ -17,6 +17,15 @@ What's planned for GAAI. This is a public signal of direction — not a commitme
 - Git subtree support for framework updates
 - `backlog-scheduler.sh` with 4 modes: `--next`, `--list`, `--graph`, `--conflicts`
 - Sub-agent orchestration design analysis (see [architecture doc](../architecture/sub-agent-orchestration.md))
+- `bump-version.sh` — syncs version across all canonical locations in one command
+- Daemon scripts documentation (automation section in README)
+
+### Changes since v2.1.1
+
+- 7 niche/duplicate skills pruned from core (47 → 40): i18n-extract, i18n-validate, i18n-glossary-sync, idiomatique-translate, build-skills-index, generate-build-in-public-content, frontend-design
+- Stale skill counts fixed across all docs
+- README consolidated: "Honest Trade-offs" section, research basis added to 5 ADRs
+- `docs/hackernews-post.md` removed (distribution content absorbed into README)
 
 ---
 
@@ -56,6 +65,6 @@ The file-based, tool-agnostic design is a permanent principle.
 
 ## Feedback
 
-Report bugs and suggest improvements at [GitHub Issues](https://github.com/gaai-framework/gaai-framework/issues).
+Report bugs and suggest improvements at [GitHub Issues](https://github.com/Fr-e-d/GAAI-framework/issues).
 
 See [Fork & Own](fork-and-own.md) for how to adapt GAAI for your own project.
