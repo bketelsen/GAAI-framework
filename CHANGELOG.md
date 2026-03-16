@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.0] - 2026-03-16
+
+### Added
+- Mandatory Memory Check in Discovery Agent — MUST scan memory index before producing any plan or artefact
+- Mandatory Memory Check in Delivery Agent — MUST scan memory index before composing context bundles for sub-agents
+- Automated CHANGELOG updates on framework sync (sync-framework-to-oss.sh)
+
+### Changed
+- Memory retrieval upgraded from optional skill to mandatory workflow step in both agents (DEC-195)
+
+---
+
 ## [2.1.1] - 2026-03-13
 
 ### Changed
