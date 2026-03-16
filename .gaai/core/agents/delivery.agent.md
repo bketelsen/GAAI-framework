@@ -133,6 +133,18 @@ Full audit with cleanup candidates: `.gaai/project/contexts/memory/governance/sk
 
 ---
 
+## Mandatory Memory Check (Before Context Building)
+
+Before composing context bundles for sub-agents, the Delivery Orchestrator MUST:
+
+1. **Read `contexts/memory/index.md`** — scan the Decision Registry for entries matching the Story's domain, tags, or affected subsystems.
+2. **If relevant entries exist** — invoke `memory-retrieve` to load the specific files (decisions, patterns, stack cookbooks). Typically 3–10 files.
+3. **If no match** — proceed without memory. Do not force-load.
+
+This step is non-negotiable. Skipping it risks implementations that contradict existing decisions or violate established conventions.
+
+---
+
 ## Git Workflow & Orchestration Flow
 
 → Defined in `workflows/delivery-loop.workflow.md` (the authoritative source for git lifecycle, step-by-step execution, and PR creation).

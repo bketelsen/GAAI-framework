@@ -87,6 +87,18 @@ The Discovery Agent decides: when to invoke, what inputs to provide, how to sequ
 
 ---
 
+## Mandatory Memory Check (Before Any Planning)
+
+Before producing a Discovery Action Plan or any artefact, the Discovery Agent MUST:
+
+1. **Read `contexts/memory/index.md`** — scan the Decision Registry and Shared Categories for entries matching the stated intent, domain, or scope.
+2. **If relevant entries exist** — invoke `memory-retrieve` to load the specific files (decisions, patterns, project context). Typically 3–10 files.
+3. **If no match** — proceed without memory. Do not force-load.
+
+This step is non-negotiable. Skipping it risks producing artefacts that contradict existing decisions or duplicate prior work.
+
+---
+
 ## 🔁 Governed Auto-Refinement Loop (Core Behavior)
 
 Discovery is not linear. The Discovery Agent iterates until artefacts are:
