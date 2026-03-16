@@ -32,7 +32,7 @@ For flow-specific rules (agent responsibilities, context isolation, backlog stat
 
 ```
 .gaai/
-├── core/                            ← Framework (shared via subtree)
+├── core/                            ← Framework (auto-synced to OSS)
 │   ├── GAAI.md                      ← Start here
 │   ├── agents/                      ← Agent definitions
 │   ├── skills/README.skills.md      ← All available skills
