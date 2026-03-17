@@ -179,7 +179,7 @@ bash .gaai/core/scripts/daemon-start.sh --status              # check state
 bash .gaai/core/scripts/daemon-start.sh --stop                # graceful shutdown
 ```
 
-> Requires: git repo, `staging` branch, [Claude Code CLI](https://claude.com/claude-code), python3, tmux (Linux) or Terminal.app (macOS).
+> Requires: git repo, `staging` branch, [Claude Code CLI](https://claude.com/claude-code), python3, tmux (recommended) or Terminal.app (macOS fallback).
 >
 > **Tested on:** macOS (Apple Silicon). Linux and WSL (Windows) are expected to work but not yet validated — contributions welcome.
 
