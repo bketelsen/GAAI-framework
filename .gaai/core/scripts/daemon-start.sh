@@ -147,8 +147,12 @@ do_status() {
 
     # Status bar
     tmux set-option -t "$monitor_session" status-style "bg=colour236,fg=colour248"
-    tmux set-option -t "$monitor_session" status-left "#[fg=colour214,bold] GAAI Monitor "
-    tmux set-option -t "$monitor_session" status-right "#[fg=colour248] %H:%M "
+    tmux set-option -t "$monitor_session" status-left-length 40
+    tmux set-option -t "$monitor_session" status-left "#[fg=colour214,bold] GAAI Delivery Monitor "
+    tmux set-option -t "$monitor_session" status-right "#[fg=colour248] Ctrl+C to exit │ %H:%M "
+    tmux set-option -t "$monitor_session" status-right-length 40
+    tmux set-window-option -t "$monitor_session" window-status-format ""
+    tmux set-window-option -t "$monitor_session" window-status-current-format ""
     tmux select-pane -t "${monitor_session}:0.0"
 
     exec tmux attach -t "$monitor_session"
