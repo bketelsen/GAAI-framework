@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automated CHANGELOG updates on framework sync (sync-framework-to-oss.sh)
 
 ### Changed
+- fix(daemon): status bar improvements + sync script immediate merge
 - feat(daemon): tmux monitor dashboard, cross-OS fixes, dependency checks
 - fix(governance): anti-collision guards + E52→E53 renumbering + CI/CD docs
 - chore(ci): CF Workers Builds for staging + skills cleanup (DEC-197, DEC-198)
