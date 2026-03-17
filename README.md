@@ -180,6 +180,8 @@ bash .gaai/core/scripts/daemon-start.sh --stop                # graceful shutdow
 ```
 
 > Requires: git repo, `staging` branch, [Claude Code CLI](https://claude.com/claude-code), python3, tmux (Linux) or Terminal.app (macOS).
+>
+> **Tested on:** macOS (Apple Silicon). Linux and WSL (Windows) are expected to work but not yet validated — contributions welcome.
 
 ---
 
