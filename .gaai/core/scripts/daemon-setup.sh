@@ -12,6 +12,9 @@ set -euo pipefail
 # Usage:
 #   bash .gaai/core/scripts/daemon-setup.sh
 #
+# Environment overrides:
+#   GAAI_TARGET_BRANCH=develop    override default branch (default: staging)
+#
 # Exit codes:
 #   0 — all checks passed, daemon is ready
 #   1 — one or more prerequisites failed
@@ -32,12 +35,24 @@ CORE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 GAAI_DIR="$(cd "$CORE_DIR/.." && pwd)"
 PROJECT_ROOT="$(cd "$GAAI_DIR/.." && pwd)"
 
+# ── Auto-detect core/project layout (v2.x split vs v1.x flat) ────────────
+if [[ -d "$GAAI_DIR/project" ]]; then
+  GAAI_PROJECT_DIR="$GAAI_DIR/project"
+else
+  GAAI_PROJECT_DIR="$GAAI_DIR/contexts"  # v1.x backwards compat
+fi
+
+# ── Configuration ─────────────────────────────────────────────────────────
+TARGET_BRANCH="${GAAI_TARGET_BRANCH:-staging}"
+
 # ── Platform guard ────────────────────────────────────────────────────
 OS="$(uname -s)"
 case "$OS" in
   Darwin|Linux) ;;
   MINGW*|MSYS*|CYGWIN*)
-    echo "ERROR: Native Windows is not supported. Use WSL instead."
+    echo "ERROR: Native Windows is not supported. Use WSL instead:"
+    echo "  wsl --install && wsl"
+    echo "  cd /mnt/c/path/to/project && bash .gaai/core/scripts/daemon-setup.sh"
     exit 1
     ;;
 esac
@@ -45,6 +60,7 @@ esac
 echo ""
 echo "GAAI Daemon Setup"
 echo "  project: $PROJECT_ROOT"
+echo "  branch:  $TARGET_BRANCH"
 echo "================================"
 
 # ── 1. Prerequisites ─────────────────────────────────────────────────────
@@ -56,31 +72,30 @@ echo "[ Prerequisites ]"
 if command -v python3 &>/dev/null; then
   pass "python3 found ($(python3 --version 2>&1 | head -1))"
 else
-  fail "python3 not found — install Python 3"
+  fail "python3 not found — install Python 3 (https://www.python.org/downloads/)"
 fi
 
 # claude CLI
 if command -v claude &>/dev/null; then
   pass "claude CLI found"
 else
-  fail "claude CLI not found — install from https://claude.com/claude-code"
+  fail "claude CLI not found — install: npm install -g @anthropic-ai/claude-code"
 fi
 
-# Terminal (platform-specific — OS set in platform guard above)
+# Terminal launcher (platform-specific)
 if [[ "$OS" == "Darwin" ]]; then
-  if [[ -d "/System/Applications/Utilities/Terminal.app" ]] || [[ -d "/Applications/Utilities/Terminal.app" ]]; then
-    pass "Terminal.app available (macOS)"
-  else
-    fail "Terminal.app not found"
-  fi
   if command -v tmux &>/dev/null; then
-    pass "tmux also available (optional on macOS)"
+    pass "tmux found (preferred launcher on macOS)"
+  elif [[ -d "/System/Applications/Utilities/Terminal.app" ]] || [[ -d "/Applications/Utilities/Terminal.app" ]]; then
+    pass "Terminal.app available (fallback launcher)"
+  else
+    warn "Neither tmux nor Terminal.app found — install tmux: brew install tmux"
   fi
 else
   if command -v tmux &>/dev/null; then
     pass "tmux found ($(tmux -V 2>&1))"
   else
-    fail "tmux not found — install with: apt install tmux (or equivalent)"
+    fail "tmux not found — install: apt install tmux (or equivalent)"
   fi
 fi
 
@@ -88,15 +103,15 @@ fi
 if git -C "$PROJECT_ROOT" rev-parse --is-inside-work-tree &>/dev/null; then
   pass "Inside a git repository"
 else
-  fail "Not inside a git repository"
+  fail "Not inside a git repository — initialize: git init && git checkout -b $TARGET_BRANCH"
 fi
 
-# staging branch
-if git -C "$PROJECT_ROOT" rev-parse --verify staging &>/dev/null 2>&1 || \
-   git -C "$PROJECT_ROOT" rev-parse --verify origin/staging &>/dev/null 2>&1; then
-  pass "staging branch exists"
+# Target branch
+if git -C "$PROJECT_ROOT" rev-parse --verify "$TARGET_BRANCH" &>/dev/null 2>&1 || \
+   git -C "$PROJECT_ROOT" rev-parse --verify "origin/$TARGET_BRANCH" &>/dev/null 2>&1; then
+  pass "$TARGET_BRANCH branch exists"
 else
-  fail "staging branch not found (local or remote) — create with: git checkout -b staging"
+  fail "$TARGET_BRANCH branch not found — create: git checkout -b $TARGET_BRANCH (or set GAAI_TARGET_BRANCH)"
 fi
 
 # delivery-daemon.sh
@@ -119,6 +134,8 @@ echo ""
 echo "[ Configuration ]"
 
 # Claude settings — skipDangerousModePermissionPrompt
+# Note: this is a GLOBAL setting that affects all Claude Code sessions.
+# Required for headless daemon mode (without it, permission prompts hang).
 CLAUDE_SETTINGS="$HOME/.claude/settings.json"
 mkdir -p "$HOME/.claude"
 if [[ -f "$CLAUDE_SETTINGS" ]]; then
@@ -128,9 +145,8 @@ with open(os.environ['CLAUDE_SETTINGS']) as f:
     d = json.load(f)
 sys.exit(0 if d.get('skipDangerousModePermissionPrompt') == True else 1)
 " 2>/dev/null; then
-    pass "skipDangerousModePermissionPrompt already set"
+    pass "skipDangerousModePermissionPrompt already set (global)"
   else
-    # Merge into existing settings
     if CLAUDE_SETTINGS="$CLAUDE_SETTINGS" python3 -c "
 import json, os
 p = os.environ['CLAUDE_SETTINGS']
@@ -140,14 +156,14 @@ d['skipDangerousModePermissionPrompt'] = True
 with open(p, 'w') as f:
     json.dump(d, f, indent=2)
 " 2>/dev/null; then
-      pass "skipDangerousModePermissionPrompt added to existing settings"
+      pass "skipDangerousModePermissionPrompt added (global — affects all Claude Code sessions)"
     else
-      fail "Could not update $CLAUDE_SETTINGS"
+      fail "Could not update $CLAUDE_SETTINGS — check permissions on $HOME/.claude/"
     fi
   fi
 else
   echo '{ "skipDangerousModePermissionPrompt": true }' > "$CLAUDE_SETTINGS"
-  pass "Created $CLAUDE_SETTINGS with skipDangerousModePermissionPrompt"
+  pass "Created $CLAUDE_SETTINGS with skipDangerousModePermissionPrompt (global)"
 fi
 
 # git hooksPath (if .githooks/ exists)
@@ -160,21 +176,27 @@ if [[ -d "$PROJECT_ROOT/.githooks" ]]; then
     pass "Set git core.hooksPath to .githooks"
   fi
 else
-  warn "No .githooks/ directory — skipping hooksPath config"
+  warn "No .githooks/ directory — pre-push safety hook not active (push to production not blocked)"
 fi
 
-# .dev.vars from .env.example
-if [[ -f "$PROJECT_ROOT/.env.example" ]] && [[ ! -f "$PROJECT_ROOT/.dev.vars" ]]; then
-  cp "$PROJECT_ROOT/.env.example" "$PROJECT_ROOT/.dev.vars"
-  pass "Created .dev.vars from .env.example"
-elif [[ -f "$PROJECT_ROOT/.dev.vars" ]]; then
-  pass ".dev.vars already exists"
-else
-  warn "No .env.example found — skipping .dev.vars"
+# Secrets file from template (optional — only if project uses .env.example)
+if [[ -f "$PROJECT_ROOT/.env.example" ]]; then
+  # Detect target: .dev.vars if wrangler config exists, .env otherwise
+  if [[ -f "$PROJECT_ROOT/wrangler.toml" ]] || [[ -f "$PROJECT_ROOT/wrangler.jsonc" ]]; then
+    SECRETS_FILE="$PROJECT_ROOT/.dev.vars"
+  else
+    SECRETS_FILE="$PROJECT_ROOT/.env"
+  fi
+  if [[ -f "$SECRETS_FILE" ]]; then
+    pass "$(basename "$SECRETS_FILE") already exists"
+  else
+    cp "$PROJECT_ROOT/.env.example" "$SECRETS_FILE"
+    warn "Created $(basename "$SECRETS_FILE") from .env.example — review and add real secrets before running daemon"
+  fi
 fi
 
 # Delivery lock + log directories
-BACKLOG_DIR="$GAAI_DIR/project/contexts/backlog"
+BACKLOG_DIR="$GAAI_PROJECT_DIR/contexts/backlog"
 LOCK_DIR="$BACKLOG_DIR/.delivery-locks"
 LOG_DIR="$BACKLOG_DIR/.delivery-logs"
 
@@ -188,10 +210,10 @@ echo "[ Health Check ]"
 
 HEALTH_SCRIPT="$CORE_DIR/scripts/health-check.sh"
 if [[ -f "$HEALTH_SCRIPT" ]]; then
-  if bash "$HEALTH_SCRIPT" --core-dir "$CORE_DIR" --project-dir "$GAAI_DIR/project" >/dev/null 2>&1; then
+  if bash "$HEALTH_SCRIPT" --core-dir "$CORE_DIR" --project-dir "$GAAI_PROJECT_DIR" >/dev/null 2>&1; then
     pass "health-check.sh passed"
   else
-    warn "health-check.sh reported issues — run it directly for details"
+    fail "health-check.sh reported issues — run directly for details: bash $HEALTH_SCRIPT"
   fi
 else
   warn "health-check.sh not found — skipping"

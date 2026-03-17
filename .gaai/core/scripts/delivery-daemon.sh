@@ -55,7 +55,7 @@ set -euo pipefail
 #   git checkout staging
 #   git config core.hooksPath .githooks     # activate pre-push hook
 #   npm install                              # dependencies
-#   cp .env.example .dev.vars               # secrets (staging only)
+#   bash .gaai/core/scripts/daemon-setup.sh  # auto-creates secrets file
 #
 # Required: suppress the --dangerously-skip-permissions warning dialog:
 #   mkdir -p ~/.claude && cat > ~/.claude/settings.json << 'EOF'

@@ -83,7 +83,7 @@ Project teams can extend or override agent skills:
 
 ## Loading Sequence
 
-1. **Phase 1:** Load global skills index (`.gaai/skills-index.yaml`)
+1. **Phase 1:** Load skills indices (`.gaai/core/skills/skills-index.yaml` + `.gaai/project/skills/skills-index.yaml`)
 2. **Phase 2:** Load agent skills index (`.gaai/core/agents/{agent}.agent-skills.yaml`)
 3. **Phase 3:** Preload required skills (SKILL.md frontmatter)
 4. **Phase 4:** Load optional skills on-demand (when task triggers "when" condition)

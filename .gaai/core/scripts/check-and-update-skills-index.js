@@ -44,25 +44,33 @@ function collectSkillFiles(dir) {
 }
 
 function isIndexStale() {
-    const indexPath = '.gaai/core/skills/skills-index.yaml';
-    const indexMtime = getFileModTime(indexPath);
+    const coreIndexPath = '.gaai/core/skills/skills-index.yaml';
+    const projectIndexPath = '.gaai/project/skills/skills-index.yaml';
+    const coreIndexMtime = getFileModTime(coreIndexPath);
+    const projectIndexMtime = getFileModTime(projectIndexPath);
 
-    if (!fs.existsSync(indexPath)) {
-        console.log('⚠️  Index file not found');
+    if (!fs.existsSync(coreIndexPath)) {
+        console.log('⚠️  Core index file not found');
         return true;
     }
 
-    // Check all SKILL.md files
-    const skillFiles = [
-        ...collectSkillFiles('.gaai/core/skills'),
-        ...collectSkillFiles('.gaai/project/skills')
-    ];
-
-    for (const skillFile of skillFiles) {
-        const skillMtime = getFileModTime(skillFile);
-        if (skillMtime > indexMtime) {
+    // Check core SKILL.md files against core index
+    const coreSkillFiles = collectSkillFiles('.gaai/core/skills');
+    for (const skillFile of coreSkillFiles) {
+        if (getFileModTime(skillFile) > coreIndexMtime) {
             console.log(`ℹ️  Detected modification: ${skillFile}`);
             return true;
+        }
+    }
+
+    // Check project SKILL.md files against project index (if project dir exists)
+    if (fs.existsSync('.gaai/project/skills')) {
+        const projectSkillFiles = collectSkillFiles('.gaai/project/skills');
+        for (const skillFile of projectSkillFiles) {
+            if (getFileModTime(skillFile) > projectIndexMtime) {
+                console.log(`ℹ️  Detected modification: ${skillFile}`);
+                return true;
+            }
         }
     }
 
@@ -160,26 +168,16 @@ function scanSkills(dir, source) {
     return skills;
 }
 
-function regenerateIndex() {
-    console.log('🔄 Regenerating skills index...');
-
-    const coreSkills = scanSkills('.gaai/core/skills', 'core');
-    const projectSkills = scanSkills('.gaai/project/skills', 'project');
-    const allSkills = [...coreSkills, ...projectSkills];
+function generateYaml(skills, header, comment) {
+    const now = new Date().toISOString().split('T')[0];
 
     // Group by track
-    const grouped = {
-        discovery: [],
-        delivery: [],
-        cross: []
-    };
-
-    for (const skill of allSkills) {
+    const grouped = { discovery: [], delivery: [], cross: [] };
+    for (const skill of skills) {
         let track = skill.track;
         if (track.includes('discovery')) track = 'discovery';
         else if (track.includes('delivery')) track = 'delivery';
         else track = 'cross';
-
         grouped[track].push(skill);
     }
 
@@ -188,21 +186,14 @@ function regenerateIndex() {
         grouped[track].sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    // Generate YAML
-    const now = new Date().toISOString().split('T')[0];
-    let yaml = '';
-    yaml += '# GAAI Skills Index (Unified)\n';
-    yaml += '# Source of truth: .gaai/core/skills/*/SKILL.md and .gaai/project/skills/*/SKILL.md\n';
-    yaml += '# Regenerate: invoke build-skills-indices skill\n\n';
-
+    let yaml = `# ${header}\n`;
+    yaml += `# ${comment}\n`;
+    yaml += '# Regenerate: invoke build-skills-index skill\n\n';
     yaml += `generated_at: ${now}\n`;
-    yaml += `total: ${allSkills.length}\n`;
-    yaml += `core: ${coreSkills.length}\n`;
-    yaml += `project: ${projectSkills.length}\n\n`;
+    yaml += `total: ${skills.length}\n\n`;
 
     for (const track of ['discovery', 'delivery', 'cross']) {
         if (grouped[track].length === 0) continue;
-
         yaml += `${track}:\n`;
         for (const skill of grouped[track]) {
             yaml += `  - id: ${skill.id}\n`;
@@ -218,12 +209,38 @@ function regenerateIndex() {
         }
         yaml += '\n';
     }
+    return yaml;
+}
 
-    // Write to file
-    const indexPath = '.gaai/core/skills/skills-index.yaml';
-    fs.writeFileSync(indexPath, yaml);
+function regenerateIndex() {
+    console.log('🔄 Regenerating skills indices...');
 
-    console.log(`✅ Index regenerated: ${coreSkills.length} core + ${projectSkills.length} project = ${allSkills.length} total`);
+    const coreSkills = scanSkills('.gaai/core/skills', 'core');
+
+    // Core index — core skills only (ships with OSS framework)
+    const coreIndexPath = '.gaai/core/skills/skills-index.yaml';
+    const coreYaml = generateYaml(
+        coreSkills,
+        'GAAI Core Skills Index',
+        'Source of truth: .gaai/core/skills/*/SKILL.md — core framework skills only'
+    );
+    fs.writeFileSync(coreIndexPath, coreYaml);
+    console.log(`✅ Core index: ${coreSkills.length} skills → ${coreIndexPath}`);
+
+    // Project index — project skills only (if project dir exists)
+    const projectSkillsDir = '.gaai/project/skills';
+    if (fs.existsSync(projectSkillsDir)) {
+        const projectSkills = scanSkills(projectSkillsDir, 'project');
+        const projectIndexPath = '.gaai/project/skills/skills-index.yaml';
+        const projectYaml = generateYaml(
+            projectSkills,
+            'GAAI Project Skills Index',
+            'Source of truth: .gaai/project/skills/*/SKILL.md — project-specific skills only'
+        );
+        fs.writeFileSync(projectIndexPath, projectYaml);
+        console.log(`✅ Project index: ${projectSkills.length} skills → ${projectIndexPath}`);
+    }
+
     return true;
 }
 
