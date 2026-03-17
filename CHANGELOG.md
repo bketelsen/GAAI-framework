@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automated CHANGELOG updates on framework sync (sync-framework-to-oss.sh)
 
 ### Changed
+- chore(ci): CF Workers Builds for staging + skills cleanup (DEC-197, DEC-198)
 - chore(gaai): anonymize sync script + skills/scripts updates
 - Memory retrieval upgraded from optional skill to mandatory workflow step in both agents (DEC-195)
 
