@@ -97,8 +97,8 @@ Production should be the most locked-down branch. No one — human or AI — sho
 | Require pull request before merging | **Yes** | All changes must come via PR from staging |
 | Required approvals | **1+** | Human gate for production promotion |
 | Dismiss stale approvals on new pushes | **Yes** | Prevents approving then force-pushing different code |
-| Require status checks to pass | **Yes** | Gate on CI before merge |
-| Required checks | `Framework Integrity Check` (from `validate-structure.yml`) + any project-specific test/deploy jobs | Ensures structural validity and test passage |
+| Require status checks to pass | **No** (by default) | Enable via `--required-checks` with project-specific CI checks (see [Existing CI checks](#existing-ci-checks-available)) |
+| Required checks | None by default | Use `--required-checks` flag during setup to add |
 | Require branches to be up to date | **Yes** | Prevents merging stale staging snapshots |
 | Restrict who can push | **No one** (enforce PR-only) | Reinforces the pre-push hook protection at the GitHub level |
 | Allow force pushes | **Never** | Protects production history |
@@ -113,8 +113,8 @@ Staging needs to allow the daemon to push status commits (`chore({id}): in_progr
 | Require pull request before merging | **Yes, with bypass** | Story branch code comes via PR; daemon status commits need direct push |
 | Bypass list | Bot account or service account running the daemon | Allows daemon to push `chore()` status commits directly |
 | Required approvals | **0 or 1** | Depending on team preference — 0 enables auto-merge for AI PRs after CI passes, 1 keeps human review mandatory |
-| Require status checks to pass | **Yes** | Gate story PRs on CI |
-| Required checks | `Framework Integrity Check` + project test suite | Prevents broken code from landing on staging |
+| Require status checks to pass | **No** (by default) | Enable via `--required-checks` if desired |
+| Required checks | None by default | Use `--required-checks` flag during setup to add |
 | Require branches to be up to date | **No** | The retry-with-rebase pattern handles concurrent pushes; requiring up-to-date would block parallel daemon deliveries |
 | Allow force pushes | **Never** | Protects staging history |
 
@@ -138,14 +138,14 @@ gh pr merge --auto --squash story/{id}
 
 For this to work, the following repo settings are required:
 - **Allow auto-merge** must be enabled in repo Settings → General
-- **Required status checks** must be configured (auto-merge waits for them to pass)
+- **Required status checks** should be configured if you want auto-merge to wait for CI (otherwise PRs merge immediately when approved). Add checks via `--required-checks` during branch protection setup
 - **Squash merging** should be allowed (or set as the only allowed merge method for cleaner history)
 
 ### Existing CI checks available
 
 | Workflow | Job | Display Name | Use as required check |
 |---|---|---|---|
-| `validate-structure.yml` | `validate` | Framework Integrity Check | Yes — validates `.gaai/` structure and artefact references |
+| `validate-structure.yml` | `validate` | Framework Integrity Check | Optional — validates `.gaai/` structure and artefact references. Add via `--required-checks "Framework Integrity Check"` if desired |
 | `resolve-contrib-conflicts.yml` | `resolve` | (contrib-specific) | No — only relevant for `contrib/*` branches |
 
 **Note:** Project-specific test suites, linting, or deployment checks should be added as additional required status checks as the project matures.
