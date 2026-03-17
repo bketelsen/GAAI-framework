@@ -146,11 +146,14 @@ else
   SKIP_PERMISSIONS=true
 fi
 
-# Launcher: Terminal.app on macOS, tmux on Linux/VPS
-if [[ "$PLATFORM" == "Darwin" ]] && command -v osascript &>/dev/null; then
+# Launcher: prefer tmux (background, robust, cross-platform), fallback to Terminal.app on macOS
+if command -v tmux &>/dev/null; then
+  LAUNCHER="tmux"
+elif [[ "$PLATFORM" == "Darwin" ]] && command -v osascript &>/dev/null; then
   LAUNCHER="terminal-app"
 else
-  LAUNCHER="tmux"
+  echo -e "${RED:-}ERROR: Neither tmux nor Terminal.app available. Install tmux: brew install tmux (macOS) / apt install tmux (Linux)${NC:-}"
+  exit 1
 fi
 
 # Claude flags (expanded into wrapper scripts at generation time)
@@ -727,7 +730,12 @@ DELIVERY_PROMPT=\$(awk 'BEGIN{s=0} NR==1 && /^--+\$/{s=1; next} s==1 && /^--+\$/
 # --output-format stream-json streams NDJSON events in real-time, so:
 #   - tee updates the log file continuously (natural heartbeat for daemon monitor)
 #   - tail -f shows progress in real-time
-if command -v timeout &>/dev/null; then
+if command -v gtimeout &>/dev/null; then
+  gtimeout "$DELIVERY_TIMEOUT" claude $CLAUDE_FLAGS -p "\${DELIVERY_PROMPT}
+
+Deliver story: $story_id" 2>&1 | tee -a "$delivery_log"
+  EXIT_CODE=\${PIPESTATUS[0]}
+elif command -v timeout &>/dev/null; then
   timeout "$DELIVERY_TIMEOUT" claude $CLAUDE_FLAGS -p "\${DELIVERY_PROMPT}
 
 Deliver story: $story_id" 2>&1 | tee -a "$delivery_log"
@@ -857,7 +865,6 @@ WRAPPER_EOF
 
   osascript <<APPLE_EOF
     tell application "Terminal"
-      activate
       do script "'$wrapper'"
     end tell
 APPLE_EOF

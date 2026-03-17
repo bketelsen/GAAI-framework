@@ -41,6 +41,8 @@ If your project uses git with a `staging` branch, the **Delivery Daemon** can au
 The daemon polls for `refined` stories and delivers them in parallel — no human in the loop.
 Full reference: see `GAAI.md` → "Branch Model & Automation".
 
+> **Tested on:** macOS (Apple Silicon). Linux and WSL (Windows) are expected to work but not yet validated — contributions welcome.
+
 ---
 
 ## New Projects: Install GAAI
