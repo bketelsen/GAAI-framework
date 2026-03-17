@@ -72,7 +72,7 @@ parse_log() {
   if [[ -n "$started_at" ]]; then
     local start_epoch
     if [[ "$(uname)" == "Darwin" ]]; then
-      start_epoch=$(date -j -f "%Y-%m-%dT%H:%M:%SZ" "$started_at" +%s 2>/dev/null || echo 0)
+      start_epoch=$(TZ=UTC date -j -f "%Y-%m-%dT%H:%M:%SZ" "$started_at" +%s 2>/dev/null || echo 0)
     else
       start_epoch=$(date -d "$started_at" +%s 2>/dev/null || echo 0)
     fi

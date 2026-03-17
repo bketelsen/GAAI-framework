@@ -730,7 +730,12 @@ DELIVERY_PROMPT=\$(awk 'BEGIN{s=0} NR==1 && /^--+\$/{s=1; next} s==1 && /^--+\$/
 # --output-format stream-json streams NDJSON events in real-time, so:
 #   - tee updates the log file continuously (natural heartbeat for daemon monitor)
 #   - tail -f shows progress in real-time
-if command -v timeout &>/dev/null; then
+if command -v gtimeout &>/dev/null; then
+  gtimeout "$DELIVERY_TIMEOUT" claude $CLAUDE_FLAGS -p "\${DELIVERY_PROMPT}
+
+Deliver story: $story_id" 2>&1 | tee -a "$delivery_log"
+  EXIT_CODE=\${PIPESTATUS[0]}
+elif command -v timeout &>/dev/null; then
   timeout "$DELIVERY_TIMEOUT" claude $CLAUDE_FLAGS -p "\${DELIVERY_PROMPT}
 
 Deliver story: $story_id" 2>&1 | tee -a "$delivery_log"

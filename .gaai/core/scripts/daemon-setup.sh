@@ -128,6 +128,29 @@ else
   fail "backlog-scheduler.sh not found in $CORE_DIR/scripts/"
 fi
 
+# git command
+if command -v git &>/dev/null; then
+  pass "git found ($(git --version 2>&1 | head -1))"
+else
+  fail "git not found — install git (https://git-scm.com/downloads)"
+fi
+
+# jq (optional — enriched monitoring)
+if command -v jq &>/dev/null; then
+  pass "jq found (optional — enriched monitoring)"
+else
+  warn "jq not found — monitor dashboard will show reduced info. Install: brew install jq (macOS) / apt install jq (Linux)"
+fi
+
+# timeout / gtimeout (optional — delivery hard timeout)
+if command -v gtimeout &>/dev/null; then
+  pass "gtimeout found (delivery hard timeout)"
+elif command -v timeout &>/dev/null; then
+  pass "timeout found (delivery hard timeout)"
+else
+  warn "Neither timeout nor gtimeout found — deliveries won't auto-timeout. Install: brew install coreutils (macOS) / apt install coreutils (Linux)"
+fi
+
 # ── 2. Auto-configure (idempotent) ───────────────────────────────────────
 
 echo ""

@@ -134,9 +134,9 @@ do_status() {
     local capture_pid=$!
     trap "kill $capture_pid 2>/dev/null" EXIT
 
-    # Top pane: daemon output
+    # Top pane: daemon output (bash loop instead of watch for macOS compatibility)
     tmux new-session -d -s "$monitor_session" \
-      "watch -t -n 2 cat '$daemon_snapshot'"
+      "while true; do clear; echo '═══ GAAI Daemon Output ═══'; echo ''; cat '$daemon_snapshot' 2>/dev/null; sleep 2; done"
 
     # Bottom pane: active deliveries summary
     tmux split-window -t "${monitor_session}:0" -v -p 50 \
