@@ -6,19 +6,19 @@ Utility scripts for maintaining GAAI framework infrastructure.
 
 ### check-and-update-skills-index.js
 
-**Purpose:** Detect when SKILL.md files have been modified and automatically regenerate the unified skills index.
+**Purpose:** Detect when SKILL.md files have been modified and automatically regenerate the skills indices (core + project).
 
 **Location:** `.gaai/core/scripts/check-and-update-skills-index.js`
 
 **How It Works:**
 
 1. Scans all SKILL.md files in `.gaai/core/skills/` and `.gaai/project/skills/`
-2. Compares their modification times (mtime) against `.gaai/core/skills/skills-index.yaml`
-3. If any SKILL.md is newer than the index:
-   - Regenerates the unified index
+2. Compares their modification times (mtime) against each layer's `skills-index.yaml`
+3. If any SKILL.md is newer than its layer's index:
+   - Regenerates both indices (core-only + project-only)
    - Reports which skills changed
    - Returns exit code 1 (index was stale and regenerated)
-4. If all SKILL.md files are older than index:
+4. If all SKILL.md files are older than their index:
    - Reports index is current
    - Returns exit code 0 (no regeneration needed)
 
@@ -63,9 +63,10 @@ This script is automatically invoked by the Git post-commit hook (`.git/hooks/po
 📝 Detected SKILL.md changes, checking skills index...
 ℹ️  Detected modification: .gaai/core/skills/cross/idiomatique-translate/SKILL.md
 🔄 Regenerating skills index...
-✅ Index regenerated: 45 core + 8 project = 53 total
+✅ Core index: 48 skills → .gaai/core/skills/skills-index.yaml
+✅ Project index: 21 skills → .gaai/project/skills/skills-index.yaml
 ✅ Index updated, adding to git...
-   (amended previous commit with updated index)
+   (amended previous commit with updated indices)
 ```
 
 **Automation Details:**
@@ -85,7 +86,7 @@ This script is automatically invoked by the Git post-commit hook (`.git/hooks/po
 4. ✅ Post-commit hook:
    - Detects SKILL.md change
    - Runs index check script
-   - Regenerates unified index
+   - Regenerates indices
    - Amends your commit to include updated index
 5. Done! Index is now current.
 
@@ -106,16 +107,19 @@ node .gaai/core/scripts/check-and-update-skills-index.js
 
 Then:
 ```bash
-git add .gaai/core/skills/skills-index.yaml
-git commit -m "regenerate(gaai): update skills index"
+git add .gaai/core/skills/skills-index.yaml .gaai/project/skills/skills-index.yaml
+git commit -m "regenerate(gaai): update skills indices"
 ```
 
 ## Index Consistency
 
-The unified index at `.gaai/core/skills/skills-index.yaml`:
+Two separate indices:
+- `.gaai/core/skills/skills-index.yaml` — core framework skills only (ships with OSS)
+- `.gaai/project/skills/skills-index.yaml` — project-specific skills only
 
+Both are:
 - **Source of truth:** Frontmatter in each SKILL.md file
-- **Derived cache:** The unified YAML index
+- **Derived cache:** Generated YAML, never edit manually
 - **Update trigger:** Any SKILL.md file modification
 - **Validation:** `/gaai-status` can verify index freshness
 
@@ -151,8 +155,8 @@ node .gaai/core/scripts/check-and-update-skills-index.js
 
 A: The hook fails silently (returns 0 without regenerating). Fallback:
 ```bash
-# Use the build-skills-indices skill via CLI
-/gaai-discover build-skills-indices
+# Use the build-skills-index skill via CLI
+/gaai-discover build-skills-index
 ```
 
 ## Design Philosophy

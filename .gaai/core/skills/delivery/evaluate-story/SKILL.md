@@ -14,7 +14,8 @@ metadata:
 inputs:
   - contexts/artefacts/stories/**       (the Story to evaluate)
   - agents/specialists.registry.yaml    (to check domain triggers)
-  - skills/skills-index.yaml            (to verify skill coverage for identified domains)
+  - core/skills/skills-index.yaml        (core framework skills)
+  - project/skills/skills-index.yaml     (project-specific skills)
   - contexts/memory/index.md            (registry — resolve project context file from `project` category)
 outputs:
   - evaluation result (inline — not written to file)
@@ -55,7 +56,7 @@ Read `agents/specialists.registry.yaml`. Scan the Story's acceptance criteria an
 
 ### 4. Verify skill coverage
 
-Read `skills/skills-index.yaml`. For each domain identified in Step 3, verify that at least one skill in the index covers the required capability.
+Read both `core/skills/skills-index.yaml` and `project/skills/skills-index.yaml`. For each domain identified in Step 3, verify that at least one skill in either index covers the required capability.
 
 Check:
 - Do the identified domains map to existing skills (by `description`, `tags`, or `category`)?

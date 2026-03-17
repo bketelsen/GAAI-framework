@@ -145,8 +145,7 @@ Optional subdirectories (create only if needed):
 This step is non-negotiable. A skill that is not indexed is invisible to agents.
 
 **6a. Skills index YAML:**
-- Core skills: invoke `build-skills-index` to regenerate `.gaai/core/skills/skills-index.yaml`
-- Project skills: invoke `build-skills-indices` to regenerate `.gaai/project/skills/skills-index.yaml`
+- Invoke `build-skills-index` to regenerate both `.gaai/core/skills/skills-index.yaml` (core) and `.gaai/project/skills/skills-index.yaml` (project)
 - Verify the new skill appears in the generated index with correct `id`, `name`, `path`, and `tags`
 
 **6b. Skills README:**
