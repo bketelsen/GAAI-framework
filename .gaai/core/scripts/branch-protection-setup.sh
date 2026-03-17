@@ -16,8 +16,7 @@ set -euo pipefail
 # Options:
 #   --main-branch <name>    production/main branch (default: main)
 #   --staging-branch <name> staging branch (default: staging)
-#   --required-checks <csv> comma-separated CI check names
-#                           (default: "Framework Integrity Check")
+#   --required-checks <csv> comma-separated CI check names (default: none)
 #   --required-approvals <n> reviewers required for production PRs (default: 1)
 #   --dry-run               show what would be done without applying
 #   --yes                   skip confirmation prompt
@@ -36,7 +35,7 @@ set -euo pipefail
 
 MAIN_BRANCH="${GAAI_MAIN_BRANCH:-main}"
 STAGING_BRANCH="${GAAI_STAGING_BRANCH:-staging}"
-REQUIRED_CHECKS="Framework Integrity Check"
+REQUIRED_CHECKS=""
 REQUIRED_APPROVALS=1
 DRY_RUN=false
 YES=false
@@ -88,11 +87,18 @@ run_or_dry() {
 
 # Build JSON array from comma-separated check names
 checks_to_json_array() {
+  local input="$1"
+  # Handle empty input
+  if [[ -z "$input" ]]; then
+    printf '[]'
+    return
+  fi
   local IFS=','
   local first=true
   printf '['
-  for check in $1; do
+  for check in $input; do
     check="$(echo "$check" | sed 's/^ *//;s/ *$//')"
+    [[ -z "$check" ]] && continue
     if [[ "$first" == "true" ]]; then
       first=false
     else
@@ -259,12 +265,22 @@ echo "[ Production Branch Protection: $MAIN_BRANCH ]"
 
 CHECKS_JSON=$(checks_to_json_array "$REQUIRED_CHECKS")
 
-PRODUCTION_PAYLOAD=$(cat <<ENDJSON
-{
+# Build required_status_checks block only if checks are specified
+if [[ "$CHECKS_JSON" != "[]" ]]; then
+  STATUS_CHECKS_BLOCK=$(cat <<ENDJSON
   "required_status_checks": {
     "strict": true,
     "contexts": $CHECKS_JSON
   },
+ENDJSON
+)
+else
+  STATUS_CHECKS_BLOCK='"required_status_checks": null,'
+fi
+
+PRODUCTION_PAYLOAD=$(cat <<ENDJSON
+{
+  $STATUS_CHECKS_BLOCK
   "enforce_admins": true,
   "required_pull_request_reviews": {
     "dismiss_stale_reviews": true,
@@ -285,7 +301,11 @@ else
       --input - --silent 2>/dev/null; then
     pass "Branch protection applied to $MAIN_BRANCH"
     info "PR required: yes, approvals: $REQUIRED_APPROVALS, dismiss stale: yes"
-    info "Status checks: $REQUIRED_CHECKS (strict: up-to-date required)"
+    if [[ -n "$REQUIRED_CHECKS" ]]; then
+      info "Status checks: $REQUIRED_CHECKS (strict: up-to-date required)"
+    else
+      info "Status checks: none (use --required-checks to add)"
+    fi
     info "Force push: blocked, deletions: blocked, admins: enforced"
   else
     fail "Could not apply branch protection to $MAIN_BRANCH"
@@ -297,12 +317,21 @@ fi
 echo ""
 echo "[ Staging Branch Protection: $STAGING_BRANCH ]"
 
-STAGING_PAYLOAD=$(cat <<ENDJSON
-{
+if [[ "$CHECKS_JSON" != "[]" ]]; then
+  STAGING_STATUS_CHECKS_BLOCK=$(cat <<ENDJSON
   "required_status_checks": {
     "strict": false,
     "contexts": $CHECKS_JSON
   },
+ENDJSON
+)
+else
+  STAGING_STATUS_CHECKS_BLOCK='"required_status_checks": null,'
+fi
+
+STAGING_PAYLOAD=$(cat <<ENDJSON
+{
+  $STAGING_STATUS_CHECKS_BLOCK
   "enforce_admins": false,
   "required_pull_request_reviews": {
     "dismiss_stale_reviews": true,
@@ -323,7 +352,11 @@ else
       --input - --silent 2>/dev/null; then
     pass "Branch protection applied to $STAGING_BRANCH"
     info "PR required: yes (admins can bypass for daemon status commits)"
-    info "Status checks: $REQUIRED_CHECKS (strict: no — allows parallel deliveries)"
+    if [[ -n "$REQUIRED_CHECKS" ]]; then
+      info "Status checks: $REQUIRED_CHECKS (strict: no — allows parallel deliveries)"
+    else
+      info "Status checks: none (use --required-checks to add)"
+    fi
     info "Force push: blocked, deletions: blocked"
   else
     fail "Could not apply branch protection to $STAGING_BRANCH"
